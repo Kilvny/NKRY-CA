@@ -11,7 +11,6 @@ const Header = (props: {
     return (
         <div>
             <Navbar {...props} />
-            Header <br />
         </div>
     )
 }

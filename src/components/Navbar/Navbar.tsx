@@ -15,10 +15,11 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { Avatar } from '@mui/material';
+import { Avatar, Drawer } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { DarkLightModeToggler } from '@/app/layout';
 import { Theme } from "@mui/material/styles"
+import Sidebar from '../Sidebar/Sidebar';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -172,16 +173,27 @@ export default function PrimarySearchAppBar({ theme, colorMode }: {
   );
 
   const { data: session } = useSession()
+  const [openDrawer, setOpenDrawer] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpenDrawer(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+  };
   return (
     
-    <Box sx={{ flexGrow: 1, w: 400 }}>
-      <AppBar position="static" color="secondary">
+    <>
+      <Box sx={{ flexGrow: 1, w: 400 }}>
+      <AppBar position="static" color="secondary" enableColorOnDark>
         <Toolbar>
           <IconButton
             size="large"
             edge="start"
             color="inherit"
             aria-label="open drawer"
+            onClick={handleDrawerOpen}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
@@ -252,6 +264,11 @@ export default function PrimarySearchAppBar({ theme, colorMode }: {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-    </Box>
+      </Box>
+      <Drawer anchor='left' open={openDrawer} onClose={handleDrawerClose} >
+        {/* //* A proof of concept for the drawer */}
+        <Sidebar />
+      </Drawer>
+    </>
   );
 }

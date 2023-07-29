@@ -10,7 +10,7 @@ const lightTheme: ThemeOptions = createTheme({
             main: "#008669"
         },
         background: {
-            default: "#EBEBEB"
+            default: "#fafafa"
         },
         text: {
             primary: "#1A1A1A",
