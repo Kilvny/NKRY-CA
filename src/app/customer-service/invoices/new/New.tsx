@@ -10,8 +10,36 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import IconButton from '@mui/material/IconButton';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import styles from './invoicesNew.module.scss'; // Import the SCSS module
+import { HexColorPicker } from "react-colorful";
+import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
+
+
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 'fit-content',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+    
+  };
+  
+
+
+
 
 const New = () => {
+    const [color, setColor] = useState("#b32aa9");
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+  
+
       // Payment status options
   const paymentStatusOptions = [
     { value: 'fully_paid', label: 'Fully Paid' },
@@ -50,8 +78,8 @@ const New = () => {
 
 
   return (
-    <Box sx={{ p: 2 }}>
-      <h2>Create New Invoice</h2>
+    <Box className={styles.container} sx={{ p: 2 , display: 'flex', flexWrap: 'wrap'}}>
+      <h2 className={styles.mainTitle}>Create New Invoice</h2>
       {/* Customer name field */}
       <TextField
         label="Customer Name"
@@ -60,19 +88,22 @@ const New = () => {
         margin="normal"
       />
       {/* Customer city field */}
+      <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
       <TextField
         label="Customer City"
         variant="outlined"
-        fullWidth
         margin="normal"
+        sx={{width: "49%"}}
       />
       {/* Customer number field */}
       <TextField
         label="Customer Number"
         variant="outlined"
-        fullWidth
         margin="normal"
+        sx={{width: "49%"}}
+
       />
+      </Box>
       {/* Order details field */}
       <TextField
         label="Order Details"
@@ -83,55 +114,81 @@ const New = () => {
         margin="normal"
       />
       {/* Sizes field (Height, width, depth) */}
-      <Paper sx={{ p: 2, mb: 2 }}>
+      <Paper 
+      className={styles.fieldContainer} 
+      sx={{ p: 2, mb: 2, width: "100%", display: 'flex', alignContent: "space-between", 
+      '@media (max-width: 768px)': 
+      {
+        flexDirection: 'column', // Stack fields vertically on small screens
+      }
+      }}>
+        <Box className={styles.sizesContainer}
+        sx={{ display: 'flex', gap: '10px', alignItems: "center",
+        '@media (max-width: 768px)': {
+            flexDirection: 'column', // Stack fields vertically on small screens
+          }
+        }}>
         <InputLabel>Sizes (H, W, D)</InputLabel>
-        <Box sx={{ display: 'flex', gap: '10px' }}>
           <TextField
             label="Height"
             variant="outlined"
             margin="none"
             size="small"
+
           />
           <TextField
             label="Width"
             variant="outlined"
             margin="none"
             size="small"
+
           />
           <TextField
             label="Depth"
             variant="outlined"
             margin="none"
             size="small"
-          />
+            
+            />
+        </Box>
+        {/* Color field */}
+        <Box 
+        sx={{ display: 'flex', gap: '10px', alignItems: 'center', ml: 3,
+        '@media (max-width: 768px)': {
+            flexDirection: 'column', // Stack color fields vertically on small screens
+            alignItems: 'flex-start', // Align label to the left on small screens
+            mt: 2, // Add some margin at the top for better spacing
+          }
+        }}>
+        <InputLabel sx={{borderLeftColor: color}}>Color</InputLabel>
+            <FormControl variant="outlined" size="small">
+           
+            <Button onClick={handleOpen} sx={{borderLeft: '40px solid', borderLeftColor: color }}>color</Button>
+            <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            >
+            <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                Select Color
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                <HexColorPicker color={color} onChange={setColor} />
+                </Typography>
+            </Box>
+            </Modal>
+            </FormControl>
+            <TextField
+            label="Custom Color"
+            variant="outlined"
+            size="small"
+            />
         </Box>
       </Paper>
-      {/* Color field */}
-      <InputLabel>Color</InputLabel>
-      <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-        <FormControl variant="outlined" size="small">
-          <Select
-            label="Color Palette"
-            value={''} // Replace with the actual selected color value
-            onChange={(e) => {
-              // Handle color change here
-            }}
-          >
-            <MenuItem value="">Select Color</MenuItem>
-            <MenuItem value="color1">Color 1</MenuItem>
-            <MenuItem value="color2">Color 2</MenuItem>
-            {/* Add more color options as needed */}
-          </Select>
-        </FormControl>
-        <TextField
-          label="Custom Color"
-          variant="outlined"
-          size="small"
-        />
-      </Box>
       {/* Other add-ons field */}
-      <InputLabel>Other Add-ons</InputLabel>
-      <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      <Box className={styles.otherAddonsContainer} sx={{ display: 'flex', gap: '10px', alignItems: 'center', width: "100%" }}>
         <TextField
           label="Text Add-on"
           variant="outlined"
