@@ -1,12 +1,15 @@
 'use client'
 import React from 'react'
-import { Typography, Box, Grid, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { Typography, Box, Grid, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
-import EmailIcon from '@mui/icons-material/Email';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import PdfIcon from '@mui/icons-material/PictureAsPdf';
 import { makeStyles } from '@mui/styles';
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import { PDFViewer, Document, Page, Text } from '@react-pdf/renderer';
+import PdfIcon from '@mui/icons-material/PictureAsPdf';
+import Link from 'next/link';
+
 
 
 interface TaxInvoiceOptions {
@@ -121,6 +124,7 @@ const TaxInvoice: React.FC<TaxInvoiceOptions> = (props) => {
     titleContainer: {
       display: 'flex',
       justifyContent: 'space-between',
+      flexDirection: 'column',
       alignItems: 'center',
       marginBottom: theme.spacing(2),
     },
@@ -166,17 +170,26 @@ const TaxInvoice: React.FC<TaxInvoiceOptions> = (props) => {
 
   return (
     <>
+      <Box sx={{display: 'flex', flexDirection: 'row', alignContent: 'center'}}>
+        <Button 
+        href='/customer-service/invoices'
+        variant='text'
+        color='info'
+        ><KeyboardDoubleArrowLeftIcon / > All invoices
+        </Button>
+
+      </Box>
       <img style={{
               position: 'absolute',
-              top: '60px',
+              top: '120px',
               right: '60px',
               width: '100px',
               height: '100px'
           }} src="https://i.ibb.co/HTY8svw/nkry-logo.jpg" alt="Logo" />
     <Box className={classes.root} id="invoice-content">
       <Box className={classes.titleContainer}>
-        <Typography variant="h5">فاتورة ضريبية</Typography>
-        <Typography variant="h4">Tax Invoice</Typography>
+        <Typography variant="h4">فاتورة ضريبية</Typography>
+        <Typography variant="h5">Tax Invoice</Typography>
         {/* Replace the 'src' attribute with your logo image path */}
       </Box>
 
@@ -184,22 +197,28 @@ const TaxInvoice: React.FC<TaxInvoiceOptions> = (props) => {
         {/* Left side */}
         <Grid item xs={6}>
           {/* NKRY LOGO */}
-          <Typography variant="h6">NKRY Address</Typography>
-          <Typography variant="h6">Tax Registration Number</Typography>
-          <Typography variant="h4">Total Due</Typography>
+          <Typography variant="h6" sx={{color: '#222222'}}>شركة مجهد مجاهد المطيري</Typography>
+          <Typography variant="h6" sx={{color: '#222222'}}>NKRY</Typography>
+          <Typography variant="body1">الرياض - حي بدر <br/ > المملكة العربية السعودية</Typography>
+          <Typography variant="h6" sx={{mt:1}}>رقم التسجيل الضريبي</Typography>
+          <Typography variant="h7" sx={{color: 'gray'}}>Tax Registration Number</Typography>
+          <Typography variant="body1">310273137700003</Typography>
+          <Typography variant="h5" sx={{mt:1}}>الرصيد المستحق</Typography>
+          <Typography variant="body1" sx={{color: 'gray'}}>Total Due</Typography>
+          <Typography variant="h4">.ر.س SAR {calculateTotal()}</Typography>
         </Grid>
 
         {/* Right side */}
         <Grid item xs={6}>
           <Typography variant="h6">العميل</Typography>
-          <Typography variant="h6">Bill To: {billTo}</Typography>
-          {customerName && <Typography variant="h6">Customer Name: {customerName}</Typography>}
+          <Typography variant="body1" sx={{color: 'gray'}}>Bill To: {billTo}</Typography>
+          {/* {customerName && <Typography variant="h6">Customer Name: {customerName}</Typography>} */}
           <Typography variant="h6">رقم الفاتورة</Typography>
-          <Typography variant="h6">Invoice Number: {invoiceNumber}</Typography>
+          <Typography variant="body1" sx={{color: 'gray'}}>Invoice Number: {invoiceNumber}</Typography>
           <Typography variant="h6">التاريخ</Typography>
-          <Typography variant="h6">Date: {date}</Typography>
+          <Typography variant="body1" sx={{color: 'gray'}}>Date: {date}</Typography>
           <Typography variant="h6">تاريخ الاستحقاق</Typography>
-          <Typography variant="h6">Due Date: {dueDate}</Typography>
+          <Typography variant="body1" sx={{color: 'gray'}}>Due Date: {dueDate}</Typography>
         </Grid>
       </Grid>
 
@@ -212,7 +231,7 @@ const TaxInvoice: React.FC<TaxInvoiceOptions> = (props) => {
               <TableCell>Description</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Price</TableCell>
-              <TableCell>VAT</TableCell>
+              <TableCell>VAT <span style={{ color: 'gray' }}>{vatRate * 100}%</span> </TableCell>
               <TableCell>Amount</TableCell>
             </TableRow>
           </TableHead>
@@ -222,7 +241,7 @@ const TaxInvoice: React.FC<TaxInvoiceOptions> = (props) => {
               <TableCell>{description}</TableCell>
               <TableCell>{quantity}</TableCell>
               <TableCell>{price}</TableCell>
-              <TableCell>{calculateTotalVAT()}<br />{vatRate * 100}%</TableCell>
+              <TableCell>{calculateTotalVAT()}</TableCell>
               <TableCell>{calculateSubtotal()}</TableCell>
             </TableRow>
             {/* Add more rows for additional items if needed */}
@@ -260,19 +279,19 @@ const TaxInvoice: React.FC<TaxInvoiceOptions> = (props) => {
       {/* Share section */}
       <Box className={classes.shareButton}>
         <IconButton onClick={handleShareViaWhatsApp}>
-          <ShareIcon />
-          <Typography variant="body1">Share via WhatsApp</Typography>
+          <WhatsAppIcon />
+          <Typography variant="body1" sx={{ml: 1}}>Share via WhatsApp</Typography>
         </IconButton>
 
         <IconButton onClick={handleShareViaEmail}>
           <ShareIcon />
-          <Typography variant="body1">Share via Email</Typography>
+          <Typography variant="body1" sx={{ml: 1}}>Share via Email</Typography>
         </IconButton>
 
         {/* Print as PDF */}
         <IconButton onClick={handlePrintAsPDF}>
-          <PdfIcon />
-          <Typography variant="body1">Print as PDF</Typography>
+          <ReceiptIcon />
+          <Typography variant="body1" sx={{ml: 1}}>Print as PDF</Typography>
         </IconButton>
 
       </Box>

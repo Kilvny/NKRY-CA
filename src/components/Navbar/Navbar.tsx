@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -20,6 +21,7 @@ import { useSession } from 'next-auth/react';
 import { DarkLightModeToggler } from '@/app/layout';
 import { Theme } from "@mui/material/styles"
 import Sidebar from '../Sidebar/Sidebar';
+import PersistentDrawerLeft, { DrawerHeader, Main } from '../Sidebar/Drawer/Drawer';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -174,18 +176,44 @@ export default function PrimarySearchAppBar({ theme, colorMode }: {
 
   const { data: session } = useSession()
   const [openDrawer, setOpenDrawer] = React.useState(false);
+  const wrapperRef = React.useRef(null);
 
+  
   const handleDrawerOpen = () => {
     setOpenDrawer(true);
   };
 
-  const handleDrawerClose = () => {
+  const handleDrawerClose: React.ReactEventHandler = () => {
     setOpenDrawer(false);
-  };
+};
+/**
+ * Hook that alerts clicks outside of the passed ref
+ */
+  function useOutsideAlerter(ref: any) {
+    useEffect(() => {
+        /**
+         * Alert if clicked on outside of element
+         */
+        function handleClickOutside(event: any) {
+        if (ref.current && !ref.current.contains(event.target)) {
+            // when clicked outside
+            setOpenDrawer(false);
+        }
+        }
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref]);
+    }
+  useOutsideAlerter(wrapperRef)
+
   return (
     
     <>
-      <Box sx={{ flexGrow: 1, w: 400 }}>
+      <Box ref={wrapperRef} sx={{ flexGrow: 1, w: 400 }}>
       <AppBar position="static" color="secondary" enableColorOnDark>
         <Toolbar>
           <IconButton
@@ -194,7 +222,7 @@ export default function PrimarySearchAppBar({ theme, colorMode }: {
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
-            sx={{ mr: 2 }}
+            sx={{ mr: 2, ...(openDrawer && { display: 'none' }) }}
           >
             <MenuIcon />
           </IconButton>
@@ -264,11 +292,18 @@ export default function PrimarySearchAppBar({ theme, colorMode }: {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-      </Box>
-      <Drawer anchor='left' open={openDrawer} onClose={handleDrawerClose} >
+      {/* //! this is to treat the whitespace under the appbar caused by drawer */}
+      <div style={{ marginTop: "-50px"}}>
+      <PersistentDrawerLeft open={openDrawer} handleDrawerClose={handleDrawerClose}  />
+      {/* <Drawer anchor='left' open={openDrawer} onClose={handleDrawerClose} > */}
         {/* //* A proof of concept for the drawer */}
-        <Sidebar />
-      </Drawer>
+        {/* <Sidebar /> */}
+      {/* </Drawer> */}
+      <Main open={openDrawer}>
+        <DrawerHeader />
+      </Main>
+      </div>
+      </Box>
     </>
   );
 }
