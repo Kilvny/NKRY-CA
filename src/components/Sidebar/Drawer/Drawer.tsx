@@ -19,6 +19,13 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { useMediaQuery } from '@mui/material';
 import { tabletSize } from '@/lib/mediaSizes';
+import InsertChartIcon from '@mui/icons-material/InsertChart';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 const drawerWidth = 240;
 
@@ -56,6 +63,24 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
   const theme = useTheme();
   const mobileCheck = useMediaQuery(tabletSize)
 
+
+  const routes: string[] = ['analytics', 'invoices', 'manage-employee', 'settings', '']
+  const routeTranslations: string[] = ['Analytics', 'Invoices', 'Manage Employees', 'Settings', 'Sign Out']
+  const routeIcons: React.JSX.Element[] = [
+    <InsertChartIcon key={0} color='primary'/>,
+    <ListAltIcon key={1} color='primary'/>,
+    <ManageAccountsIcon key={2} color='primary'/>,
+    <AdminPanelSettingsIcon key={3} color='primary'/>,
+    <LogoutOutlinedIcon key={4} color='error' />
+  ]
+
+  const handleOnClickIcon = (e:any, text: string ) => {
+    if (text === "Sign Out") {
+        signOut()
+    }
+    handleDrawerClose(e)
+  }
+
   return (
 
       <Drawer
@@ -65,7 +90,8 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-            // top: open ? (mobileCheck ? 64 : 57) : 0
+            top: open ? (mobileCheck ? 64 : 57) : 0
+
           },
         }}
         variant="persistent"
@@ -80,30 +106,21 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
+          {routeTranslations.map((text, index) => (
+            <ListItem key={text} disablePadding onClick={(e) => {handleOnClickIcon(e,text)}}>
+              <Link href={`/dashboard/${encodeURIComponent(routes[index])}`} style={{textDecoration: 'none', color: theme.palette.text.secondary}}>
+                <ListItemButton>
+                    <ListItemIcon>
+                    {routeIcons[index]}
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                </ListItemButton>
+              </Link>
             </ListItem>
           ))}
         </List>
         <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+
       </Drawer>
 
   );
