@@ -14,6 +14,9 @@ import Loading from '@/components/common/loading'
 import Header from '@/components/Header/Header'
 import lightTheme from '@/pages/theme/lightTheme'
 import darkTheme from '@/pages/theme/darkTheme'
+import Cookies from 'js-cookie';
+import Footer from '@/components/Footer/Footer'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -31,11 +34,16 @@ export default function RootLayout({
 }: {
     children: React.ReactNode
 }) {
-    const [mode, setMode] = React.useState<'light' | 'dark'>('dark');
+    // const storedTheme = Cookies.get<'light' | 'dark'>('theme') || 'dark'; // Get the stored theme from cookies, dark if not found
+    const [mode, setMode] = React.useState<'light' | 'dark'>('dark'); // default is storedTheme
     const colorMode = React.useMemo(
         () => ({
             toggleColorMode: () => {
                 setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+                // const newMode = mode === 'light' ? 'dark' : 'light';
+                // // save the new theme to cookies
+                // Cookies.set('theme', newMode);
+                // setMode(newMode)
             },
         }),
         [],
@@ -74,15 +82,17 @@ export default function RootLayout({
             <ThemeProvider theme={mode === 'dark' ? darkThemeChosen : lightThemeChosen}>
                 <SessionProvider>
                     <CssBaseline />
-                    <html lang="en">
-                        <body className={inter.className}>
+                    <html lang="en" style={{ height: "100%" }}>
+                        <body className={inter.className} style={{ height: "100%" }}>
                         <CssBaseline />
                             <Suspense fallback={<Loading />}>
                                 <Header theme={theme} colorMode={colorMode} />
                             </Suspense>
                             {children}
+                        <Footer />
                         </body>
                     </html>
+                    
                 </SessionProvider>
             </ThemeProvider>
 

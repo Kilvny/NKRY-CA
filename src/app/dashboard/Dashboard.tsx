@@ -1,24 +1,21 @@
 import { Box, Grid, Paper } from "@mui/material"
 import scss from "./Dashboard.module.scss"
 import PersistentDrawerLeft from "@/components/Sidebar/Drawer/Drawer"
+import DataRibbon from "@/components/Dashboard/DataRibbon/DataRibbon"
+import TransactionsPerDay from "@/components/Dashboard/TransactionsPerDay/TransactionsPerDay"
+import TransactionBottomRow from "@/components/Dashboard/TransactionBottomRow/TransactionBottomRow"
 
 const Dashboard = () => {
     return (
-        <Box>
-          <Grid container gap={2} className={scss.topCardsContainer}>
-            <Grid>
-                <Paper className={scss.dataCard}>xs-4</Paper>
-            </Grid>
-            <Grid>
-                <Paper className={scss.dataCard}>xs-4</Paper>
-            </Grid>
-            <Grid>
-                <Paper className={scss.dataCard}>xs-4</Paper>
-            </Grid>
+        <Box sx={{ p: '1rem 80px', m: '0 1rem 3rem'}}>
+          <Grid gap={4} marginTop={2}>
+          {/* dataribbon */}
+          <DataRibbon />
+          {/* charts */}
+          <TransactionsPerDay />
           </Grid>
-          <Grid xs={12} marginY={2}>
-            <Paper className={scss.dataCard}>xs-8</Paper>
-          </Grid>
+          {/* piecharts */}
+          <TransactionBottomRow />
         </Box>
     )
 }

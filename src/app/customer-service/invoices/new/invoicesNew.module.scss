@@ -1,3 +1,6 @@
+$secondary-color: #37A5D6;
+$primary-color: #FF5733;
+
 // invoicesNew.module.scss
 .field-container {
     display: flex;
@@ -51,4 +54,13 @@
   
   .mainTitle {
     flex: 1;
+  }
+
+  .button {
+    background-color: $secondary-color;
+    color: $primary-color;
+  
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
   }

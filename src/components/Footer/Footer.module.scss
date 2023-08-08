@@ -1,0 +1,36 @@
+.footer {
+    position: relative !important;
+    bottom: -2rem !important;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-top: -50px;
+    // position: relative;
+    // margin-top: -180px; /* negative value of footer height */
+    // height: 180px;
+    // clear: both;
+    
+    font-size: 12px !important;
+    height: 50px;
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      list-style-type: none;
+      margin: auto;
+      width: 100%;
+    }
+  
+    li {
+      padding: 1rem;
+  
+      a {
+        text-decoration: none;
+  
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }

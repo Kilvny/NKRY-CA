@@ -5,16 +5,19 @@ import Dashboard from './dashboard/Dashboard'
 import Loading from '@/components/common/loading'
 import { Suspense } from 'react'
 import Login from "@/components/Login/Login"
+import Script from "next/script"
+import Footer from "@/components/Footer/Footer"
 
 export default function Home() {
     const { data: session } = useSession()
 // TODO: move the adimn dashboard to a new admin route  
     return (
-        <main className="x">
+        <main className="x" >
+
                 {/* <SessionProvider> */}
                     <Suspense fallback={<Loading />}>
                         { session ? <Dashboard /> : ""}
-                        <Login />
+                        {/* <Login /> */}
                     </Suspense>
                 {/* </SessionProvider> */}
         </main>

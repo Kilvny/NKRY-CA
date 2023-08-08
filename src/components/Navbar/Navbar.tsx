@@ -216,7 +216,8 @@ export default function PrimarySearchAppBar({ theme, colorMode }: {
       <Box ref={wrapperRef} sx={{ flexGrow: 1, w: 400 }}>
       <AppBar position="static" color="secondary" enableColorOnDark>
         <Toolbar>
-          <IconButton
+          {session && 
+          (<IconButton
             size="large"
             edge="start"
             color="inherit"
@@ -225,7 +226,7 @@ export default function PrimarySearchAppBar({ theme, colorMode }: {
             sx={{ mr: 2, ...(openDrawer && { display: 'none' }) }}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton>)}
           <Typography
             variant="h6"
             noWrap

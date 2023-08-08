@@ -1,0 +1,31 @@
+.bottomRow {
+    display: flex;
+    gap: 0.5rem;
+    // grid-template-columns: 1fr;
+    justify-content: space-between;
+    // border: 1px #fff solid; // for debugging and help styling
+    margin-top: 10px;
+
+    @media screen and (min-width: 900px) {
+      flex-direction: row;
+    }
+  }
+  
+  .dataCard {
+    // position: relative;
+    top: 1rem;
+    height: auto;
+    width: 100%;
+  
+    p {
+      padding: 0.5rem 1rem;
+      margin: 0;
+    }
+
+    // @media screen and (min-width: 900px) {
+    //     justify-self: center;
+    //     align-self: center;
+    //     margin: auto;
+    //     margin-left: 10px;
+    //   }
+  }
