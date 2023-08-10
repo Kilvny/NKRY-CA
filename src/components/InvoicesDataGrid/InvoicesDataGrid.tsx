@@ -105,7 +105,7 @@ const updatedColumns = columns.map((col) =>
     col.field === 'details' ? { ...col, renderCell: renderDetailsCell } : col
   );
 
-export default function InvoicesDataGrid({ admin = false }: { admin?: boolean }) {
+export default function InvoicesDataGrid({ admin = false, isOrders=false, ordersRows = null, ordersColumns = [] }: { admin?: boolean, isOrders?: boolean, ordersRows?: any, ordersColumns?: GridColDef<any>[] }) {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -121,10 +121,9 @@ export default function InvoicesDataGrid({ admin = false }: { admin?: boolean })
 //   if (loading) {
 //     return <Animations />; // Show loading animations while the component is being rendered
 //   }
-  
-  return (
-    <div style={{ height: 500, width: '100%', padding: 20 }}>
-      {
+
+  const RenderDataGrid = () => {
+    return (
         loading ? 
         (<Animations />) :
         (<DataGrid 
@@ -135,6 +134,33 @@ export default function InvoicesDataGrid({ admin = false }: { admin?: boolean })
         }}
         // loading
         />)
+    )
+  }
+  
+
+  const RenderDataGridForOrders = () => {
+    return (
+        loading ? 
+        (<Animations />) :
+        (<DataGrid 
+        rows={ordersRows} 
+        columns={ordersColumns}
+        slots={{
+        toolbar: GridToolbar
+        }}
+        // loading
+        />)
+    )
+  }
+  
+  return (
+    <div style={{ height: 500, width: '100%', padding: 20 }}>
+      {
+      isOrders 
+      ? 
+      <RenderDataGridForOrders />
+      :
+      <RenderDataGrid />
       }
     </div>
   );
