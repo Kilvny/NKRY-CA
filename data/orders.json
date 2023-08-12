@@ -403,7 +403,8 @@
             "description": "Innovative accessory",
             "quantity": 7,
             "price": 19.99,
-            "details": ""
+            "details": "",
+            "cost": 1997
         },
         {
             "id": 30,

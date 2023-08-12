@@ -14,14 +14,15 @@ type Props = {
     orders: object[],
 }
 
-const renderCostCell = (params: any) => {
+const renderEditCostCell = (params: any) => {
     const orderIdFromInoviceNumber = params?.row?.invoiceNumber; // Access the 'id' property from the row data
     return (
-      <Link href={`/technician/orders/edit/${encodeURIComponent(orderIdFromInoviceNumber)}`}>
+      <Link href={`/technician/orders/${encodeURIComponent(orderIdFromInoviceNumber)}/edit`}>
         <EditOutlinedIcon color='info' />
       </Link>
     );
   };
+
 
 const columns: GridColDef[]  = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -31,8 +32,8 @@ const columns: GridColDef[]  = [
     { field: 'description', headerName: 'Description', width: 150 },
     { field: 'quantity', headerName: 'Quantity', width: 100 },
     { field: 'color', headerName: 'Color', width: 100 },
-    { field: 'cost', headerName: 'Add Cost', width: 80, renderCell: renderCostCell}
-    
+    { field: 'cost', headerName: 'Cost', width: 80},
+    { field: 'editCost', headerName: 'Update Cost', width: 80, renderCell: renderEditCostCell  }
 
   ]
 
@@ -46,7 +47,7 @@ const OrdersTable = ({ title, orders }: Props) => {
         description: invoice.description, // TODO: change this to add-ons
         quantity: invoice.quantity,
         color: '#f01',
-        // cost: renderCostCell
+        cost: invoice.cost? invoice.cost : ""
     }))
   return (
     <div>
