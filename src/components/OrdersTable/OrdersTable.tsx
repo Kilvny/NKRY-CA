@@ -40,12 +40,13 @@ const columns: GridColDef[]  = [
 const OrdersTable = ({ title, orders }: Props) => {
         
     const rows: GridRowsProp = orders.map((invoice: any) => ({
-        id: invoice.id,
-        invoiceNumber: invoice.invoiceNumber,
-        date: invoice.date,
-        item: invoice.item,
-        description: invoice.description, // TODO: change this to add-ons
-        quantity: invoice.quantity,
+        // id: invoice.id,
+        // invoiceNumber: invoice.invoiceNumber,
+        // date: invoice.date,
+        // item: invoice.item,
+        // description: invoice.description, // TODO: change this to add-ons
+        // quantity: invoice.quantity,
+        ...invoice, // same as before but more readable:) 
         color: '#f01',
         cost: invoice.cost? invoice.cost : ""
     }))
