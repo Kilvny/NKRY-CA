@@ -1,0 +1,66 @@
+$secondary-color: #37A5D6;
+$primary-color: #FF5733;
+
+// invoicesNew.module.scss
+.field-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .field-container > .MuiTextField {
+    flex: 0.5;
+  }
+  
+  .sizes-container {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .sizes-container > .MuiTextField {
+    flex: 0.3;
+  }
+  
+  .color-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .color-container > .MuiFormControl {
+    flex: 1;
+  }
+  
+  .other-addons-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .other-addons-container > .MuiTextField {
+    flex: 0.5;
+  }
+  
+  .payment-status-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .payment-status-container > .MuiTextField {
+    flex: 0.5;
+  }
+  
+  .mainTitle {
+    flex: 1;
+  }
+
+  .button {
+    background-color: $secondary-color;
+    color: $primary-color;
+  
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+  }

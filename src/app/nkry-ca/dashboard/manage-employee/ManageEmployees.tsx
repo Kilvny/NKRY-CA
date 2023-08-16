@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DataGrid,
   GridColDef,
@@ -42,6 +42,31 @@ const ManageEmployees = () => {
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [editedDepartment, setEditedDepartment] = useState("");
+  const [employees, setEmployees] = useState([
+    {
+      id: "1",
+      username: "Metro",
+      email: "sada@as.net",
+      phone: "0219479466",
+      salary: "4760",
+      gender: "Accounting",
+    },
+    {
+      id: "2",
+      username: "John Doe",
+      email: "john@example.com",
+      phone: "1234567890",
+      salary: "5500",
+      gender: "HR",
+    },
+    // Add more employee data
+  ]);
+
+  useEffect(() => {
+    fetch("https://dummyjson.com/users")
+      .then((res) => res.json())
+      .then((json) => setEmployees(json?.users));
+  }, []); // Empty dependency array to ensure the effect runs only once on mount
 
   const handleEditClick = (
     userId: any,
@@ -73,9 +98,9 @@ const ManageEmployees = () => {
         onClick={() =>
           handleEditClick(
             params.row.id,
-            params.row.name,
+            params.row.username,
             params.row.email,
-            params.row.department
+            params.row.gender
           )
         }
       >
@@ -88,11 +113,11 @@ const ManageEmployees = () => {
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 50 },
-    { field: "name", headerName: "Name", width: 150 },
+    { field: "username", headerName: "Name", width: 150 },
     { field: "email", headerName: "Email", width: 150 },
-    { field: "phoneNumber", headerName: "Phone Number", width: 150 },
-    { field: "salary", headerName: "Salary", width: 100 },
-    { field: "department", headerName: "Department", width: 150 },
+    { field: "phone", headerName: "Phone Number", width: 150 },
+    { field: "password", headerName: "password", width: 100 },
+    { field: "gender", headerName: "gender", width: 150 },
     {
       field: "actions",
       headerName: "Actions",

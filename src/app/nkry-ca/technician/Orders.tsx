@@ -1,6 +1,6 @@
 import OrdersTable from '@/components/OrdersTable/OrdersTable'
 import React from 'react'
-import data from "../../../data/orders.json"
+import data from "../../../../data/orders.json"
 
 type Props = {}
 

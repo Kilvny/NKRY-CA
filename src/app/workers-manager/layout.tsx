@@ -16,7 +16,6 @@ import lightTheme from '@/pages/theme/lightTheme'
 import darkTheme from '@/pages/theme/darkTheme'
 import Cookies from 'js-cookie';
 import Footer from '@/components/Footer/Footer'
-import { usePathname } from 'next/navigation'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -35,11 +34,6 @@ export default function RootLayout({
 }: {
     children: React.ReactNode
 }) {
-    
-    
-    const pathname = usePathname();
-    const isOnNKRY_CA = pathname?.startsWith('/nkry-ca');
-
     // const storedTheme = Cookies.get<'light' | 'dark'>('theme') || 'dark'; // Get the stored theme from cookies, dark if not found
     const [mode, setMode] = React.useState<'light' | 'dark'>('dark'); // default is storedTheme
     const colorMode = React.useMemo(
@@ -83,35 +77,29 @@ export default function RootLayout({
     )
 
     return (
-      <ColorModeContext.Provider value={colorMode}>
-        {/* // ! instead of normal theme passed  */}
-        <ThemeProvider
-          theme={mode === "dark" ? darkThemeChosen : lightThemeChosen}
-        >
-          <SessionProvider>
-            <CssBaseline />
-            <html lang="en" style={{ height: "100%" }}>
-              <body className={inter.className} style={{ height: "100%" }}>
-                <CssBaseline />
-                <Suspense fallback={<Loading />}>
-                  {isOnNKRY_CA ? (
-                    <Header theme={theme} colorMode={colorMode} />
-                  ) : (
-                    <DarkLightModeToggler
-                      theme={theme}
-                      colorMode={colorMode}
-                      mobile={false}
-                    />
-                  )}
-                </Suspense>
-                {children}
-                {isOnNKRY_CA ? <Footer /> : ""}
-              </body>
-            </html>
-          </SessionProvider>
-        </ThemeProvider>
-      </ColorModeContext.Provider>
-    );
+        <ColorModeContext.Provider value={colorMode}>
+            {/* // ! instead of normal theme passed  */}
+            <ThemeProvider theme={mode === 'dark' ? darkThemeChosen : lightThemeChosen}>
+                <SessionProvider>
+                    <CssBaseline />
+                    <html lang="en" style={{ height: "100%" }}>
+                        <body className={inter.className} style={{ height: "100%" }}>
+                        <CssBaseline />
+                            <Suspense fallback={<Loading />}>
+                                <Header theme={theme} colorMode={colorMode} />
+                            </Suspense>
+                            {children}
+                        <Footer />
+                        </body>
+                    </html>
+                    
+                </SessionProvider>
+            </ThemeProvider>
+
+        </ColorModeContext.Provider>
+
+
+    )
 }
 
 
