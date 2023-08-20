@@ -13,7 +13,7 @@ export default function Home() {
 // TODO: move the adimn dashboard to a new admin route  
     return (
         <main className="x" >
-
+            {/* // TODO: The use of such a page would be to display Redirecting... then redirect the user based on the user role */}
                 {/* <SessionProvider> */}
                     <Suspense fallback={<Loading />}>
                         { session ? <Dashboard /> : ""}
