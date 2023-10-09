@@ -5,6 +5,7 @@ import { Box, Typography, TextField, Button, CircularProgress } from "@mui/mater
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import scss from "./SignIn.module.scss"
+import { User } from "next-auth";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -49,9 +50,13 @@ const SignIn = () => {
         redirect: false,
       });
       if (result?.error) {
-        setError(result.error);
+          setError(result.error);
         return;
-      }
+    }
+    if(result?.ok) {
+        console.log(result)
+        const currentUser = localStorage.getItem("user")
+    }
     //   if (result?.ok) {
       router.push(callbackUrl);
         // router.push("/");

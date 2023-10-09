@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { NextApiRequest, NextApiResponse } from "next";
 import { userService } from "../services/UserService";
+import { login } from "@/services/authentication.service";
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("Please provide process.env.NEXTAUTH_SECRET");
 }
@@ -53,7 +54,15 @@ export const authOptions: NextAuthOptions = {
           throw new Error("No credentials.");
         }
         const { email, password } = credentials;
-        return userService.signInCredentials(email, password);
+        // return userService.signInCredentials(email, password);
+        const user = await login(email, password);
+        if (user) {
+            // If login is successful, return the user object
+            return Promise.resolve(user);
+          } else {
+            // If login fails, return null
+            return Promise.resolve(null);
+          }
       },
     }),
   ],
@@ -61,17 +70,18 @@ export const authOptions: NextAuthOptions = {
     signIn: "/signin",
   },
   callbacks: {
-    async jwt({ token, user }) {
-      /* Step 1: update the token based on the user object */
-      if (user) {
-        token.role = user.role;
-      }
-      return token;
-    },
-    session({ session, token }) {
+//     async jwt({ token, user }) {
+//       /* Step 1: update the token based on the user object */
+//       if (user) {
+//         token.role = user.role;
+//       }
+//       return token;
+//     },
+    session({ session, token, user }) {
       /* Step 2: update the session.user based on the token object */
       if (token && session.user) {
-        session.user.role = token.role;
+        session.user.role = token?.role;
+        session.user = user
       }
       return session;
     },
