@@ -9,6 +9,8 @@ interface User extends DefaultUser {
     username: string;
     token: string;
   };
+
+const apiUrl = process.env?.apiUrl
   
   // Function to handle user login
   export const login = async (username: string, password: string): Promise<User | null> => {
@@ -17,7 +19,7 @@ interface User extends DefaultUser {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       // Make a POST request to your authentication API
     //   TODO: Replace the url with apiUrl from enviroment variable
-      const response = await fetch("https://localhost:7112/api/auth/login", {
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +43,7 @@ interface User extends DefaultUser {
         };
         // localStorage.setItem("user", JSON.stringify(user));
         axios.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
-        const _user = await axios.get(`https://localhost:7112/api/Users?SearchQuery=${username}`)
+        const _user = await axios.get(`${apiUrl}/Users?SearchQuery=${username}`)
         const userResult = await _user.data;
         user.username = userResult.Email;
         user.id = userResult.Id;

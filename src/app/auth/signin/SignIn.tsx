@@ -77,7 +77,7 @@ const SignIn = () => {
     >
      { session 
       ? 
-      (<span>signed in as {session?.user.email}. </span> )
+      (<span>signed in as {session?.user?.email}. </span> )
       :
       (
         <Box
