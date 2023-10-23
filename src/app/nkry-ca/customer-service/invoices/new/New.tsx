@@ -14,6 +14,11 @@ import styles from './invoicesNew.module.scss'; // Import the SCSS module
 import { HexColorPicker } from "react-colorful";
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
+import { InvoiceDTO } from '@/DTO\'s/Invoice';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useSession } from 'next-auth/react';
+
 
 
 const style = {
@@ -30,6 +35,9 @@ const style = {
   };
   
 
+const apiUrl: string = process.env.apiUrl
+// const sessionToken = Cookies.get('next-auth.session-token');
+const sessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNoYWxsb3dAcmVzdW1lLmNvIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJhMWVhZTNkMi1mYWFlLTQ2NmQtOTdiZi03YjI3ZmViODhiOTUiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNzAwNjY5NTk3LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyNTgiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUyNTgifQ.4pVRG5DBB_tIceRkKR-5iKsEJ3VARXaaSzjHD5BNqWM"
 
 
 
@@ -39,17 +47,119 @@ const New = () => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
   
+    const [billTo, setBillTo] = useState('');
+    const [items, setItems] = useState('');
+    const [quantity, setQuantity] = useState(0);
+    const [description, setDescription] = useState('');
+    const [price, setPrice] = useState(0);
+    // State to keep track of payment status
+    const [paymentStatus, setPaymentStatus] = useState<number>(0);
+    const [paidAmount, setPaidAmount] = useState<number>(0);
+    const [remainingAmount, setRemainingAmount] = useState<number>(0);
+
+    const session = useSession();
+    
+
+    const data: InvoiceDTO = {
+      billTo: billTo,
+      order: {
+        items: items,
+        quantity: quantity,
+        description: description,
+        price: price,
+        paidAmount: paidAmount,
+      }
+    }
+  
+    const handleBillToChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setBillTo(e.target.value);
+    };
+    
+    const handleItemsChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setItems(e.target.value);
+    };
+    
+    const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setQuantity(parseFloat(e.target.value));
+    };
+
+    const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setDescription(e.target.value);
+    };
+    
+    const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setPrice(parseFloat(e.target.value));
+    };
+
+  const handleSave = async () => {
+    console.log(data);
+    try {
+      // Send the formData to the API
+      // Check if the token exists
+      if (!sessionToken) {
+        // Handle the case where there's no token (e.g., redirect to login)
+        console.error('No token found.');
+        return;
+      }
+
+      // Create a headers object with the Authorization header
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionToken}`,
+      };
+      const response = await axios.post("https://localhost:7112/api"+"/invoices" ,{
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(data),
+      }
+      
+      );
+
+      // Handle the response as needed (e.g., show a success message)
+      console.log('Response:', response.data);
+
+      // Clear the form if needed
+      // setBillTo("")
+    } catch (error) {
+      // Handle errors (e.g., show an error message)
+      console.error('Error:', error);
+    }
+  };
+    // // uploda image 
+    
+    // const [image, setImage] = React.useState(null);
+    // const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    //   const fileInput = document?.getElementById('profilePictureInput');
+    //   const previewImage = document?.getElementById('previewImage');
+
+        
+    //         // const file = e?.target?.files[0];
+    //         // const reader = new FileReader();
+    //         // previewImage?.addEventListener('change', function () {
+    //         //   const file = fileInput?.files[0];
+    //         //   const reader = new FileReader();
+  
+    //         //   reader.onload = function (e) {
+    //         //       previewImage.src = e.target.result;
+    //         //       previewImage.style.display = 'block';
+    //         //   }
+  
+    //           // reader.readAsDataURL(file);
+    //       });
+
+            
+        // setImage(e?.target?.files[0]);
+    // };
 
       // Payment status options
+  
+  
   const paymentStatusOptions = [
     { value: 'fully_paid', label: 'Fully Paid' },
     { value: 'partly_paid', label: 'Partly Paid' },
   ];
 
-  // State to keep track of payment status
-  const [paymentStatus, setPaymentStatus] = useState<string>('');
-  const [paidAmount, setPaidAmount] = useState<string>('');
-  const [remainingAmount, setRemainingAmount] = useState<string>('');
+
 
   // Handler for changing the payment status based on paid and remaining amount
   const handlePaymentStatusChange = (paidAmount : string, remainingAmount : string) => {
@@ -66,6 +176,7 @@ const New = () => {
   const handlePaidAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
     const paidAmount = e.target.value;
     const remainingAmount = ''; // Get the remaining amount from the state or input field
+    setPaidAmount(parseFloat(paidAmount))
     handlePaymentStatusChange(paidAmount, remainingAmount);
   };
 
@@ -82,10 +193,13 @@ const New = () => {
       <h2 className={styles.mainTitle}>Create New Invoice</h2>
       {/* Customer name field */}
       <TextField
+        name="billTo"
         label="Customer Name"
         variant="outlined"
         fullWidth
         margin="normal"
+        value={billTo}
+        onChange={handleBillToChange}
       />
       {/* Customer city field */}
       <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
@@ -107,11 +221,14 @@ const New = () => {
       {/* Order details field */}
       <TextField
         label="Order Details"
+        name="items"
         variant="outlined"
         fullWidth
         multiline
         rows={4}
         margin="normal"
+        value={items}
+        onChange={handleItemsChange}
       />
       {/* Sizes field (Height, width, depth) */}
       <Paper 
@@ -191,9 +308,21 @@ const New = () => {
       <Box className={styles.otherAddonsContainer} sx={{ display: 'flex', gap: '10px', alignItems: 'center', width: "100%" }}>
         <TextField
           label="Text Add-on"
+          name="description"
           variant="outlined"
           fullWidth
           margin="none"
+          value={description}
+          onChange={handleDescriptionChange}
+        />
+        <TextField
+          label="Quantity"
+          name="quantity"
+          variant="outlined"
+          fullWidth
+          margin="none"
+          value={quantity}
+          onChange={handleQuantityChange}
         />
         <input
           accept="image/*"
@@ -206,21 +335,29 @@ const New = () => {
             <PhotoCameraIcon />
           </IconButton>
         </label>
+        <img id="previewImage" src="#" alt="Preview" 
+        style={{ display: 'none',  width: '300px', height: '300px' }}
+        />
       </Box>
       {/* Price field */}
       <TextField
         label="Price"
+        name="price"
         variant="outlined"
         fullWidth
         margin="normal"
+        value={price}
+        onChange={handlePriceChange}
       />
       {/* Paid amount field */}
       <TextField
         label="Paid Amount"
+        name="paidAmount"
         variant="outlined"
         fullWidth
         margin="normal"
         // value={paidAmount} // Use the state value for paidAmount
+        value={paidAmount} // Use the state value for paidAmount
         onChange={handlePaidAmountChange} // Attach the event handler
       />
       {/* Remaining amount field */}
@@ -249,7 +386,7 @@ const New = () => {
         margin="normal"
       />
       {/* Save button */}
-      <Button color="success" variant="contained" size="large">
+      <Button color="success" variant="contained" size="large" onClick={handleSave}>
         Save
       </Button>
       {/* After that, the Tax invoice is generated and customer service is redirected to a screen where the Tax invoice is displayed. Also, the invoice appears on the invoices, and the craftsman can view it and add details such as the initial cost and stuff */}

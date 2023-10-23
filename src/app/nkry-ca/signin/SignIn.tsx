@@ -55,9 +55,11 @@ const SignIn = () => {
     }
     if(result?.ok) {
         console.log(result)
+        // localStorage.setItem("user", JSON.stringify(result))
         const currentUser = localStorage.getItem("user")
     }
     //   if (result?.ok) {
+      localStorage.setItem("user", JSON.stringify(result))
       router.push(callbackUrl);
         // router.push("/");
     //   }

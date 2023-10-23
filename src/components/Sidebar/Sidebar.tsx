@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router';
 
 /**
  * * For more info on routing in next app refer to
@@ -8,8 +9,16 @@ import Link from 'next/link'
  */
 
 const Sidebar = () => {
+
+  const router = useRouter();
+  console.log(`pathname ${router.pathname} route: ${router.route} asPath ${router.asPath} basePath: ${router.basePath} `);
+
+  const onclick = () => {
+    console.log(`pathname ${router.pathname} route: ${router.route} asPath ${router.asPath} basePath: ${router.basePath} `);
+  }
+
   return (
-    <div>
+    <div onClick={onclick}>
         <ul>
             <li>
               <Link href="/analytics">Analytics</Link>

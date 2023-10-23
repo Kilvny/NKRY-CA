@@ -9,7 +9,7 @@ import { SessionProvider } from 'next-auth/react'
 import { Inter } from 'next/font/google'
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import Loading from '@/components/common/loading'
 import Header from '@/components/Header/Header'
 import lightTheme from '@/pages/theme/lightTheme'
@@ -40,20 +40,73 @@ export default function RootLayout({
     const pathname = usePathname();
     const isOnNKRY_CA = pathname?.startsWith('/nkry-ca');
 
-    // const storedTheme = Cookies.get<'light' | 'dark'>('theme') || 'dark'; // Get the stored theme from cookies, dark if not found
-    const [mode, setMode] = React.useState<'light' | 'dark'>('dark'); // default is storedTheme
+
+    const getInitialThemeMode = () => {
+        // Get the theme mode from local storage or default to 'light' if not found.
+        let storedTheme: string | null = 'light';
+        try {
+            storedTheme = localStorage?.getItem('theme');
+        } catch (error) {
+            console.log(error);
+        }
+        return storedTheme;
+    };
+
+    const [mode, setMode] = React.useState<string | null>("light");
+    useEffect(() => {
+        const getInitialThemeMode = () => {
+            // Get the theme mode from local storage or default to 'light' if not found.
+            let storedTheme: string | null = 'light';
+            try {
+                storedTheme = localStorage?.getItem('theme');
+            } catch (error) {
+                console.log(error);
+            }
+            return storedTheme;
+        };
+
+        // Set the initial theme mode from local storage
+        setMode(getInitialThemeMode());
+    }, []); // The empty dependency array ensures this runs once on mount
+
     const colorMode = React.useMemo(
         () => ({
             toggleColorMode: () => {
-                setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-                // const newMode = mode === 'light' ? 'dark' : 'light';
-                // // save the new theme to cookies
-                // Cookies.set('theme', newMode);
-                // setMode(newMode)
+                // Toggle the theme mode and store it in local storage.
+                const newMode = mode === "light" ? "dark" : "light";
+                try {
+                    localStorage?.setItem("theme", newMode);
+                } catch (error) {
+                    console.log(error);
+                }
+                setMode(newMode);
             },
         }),
-        [],
+        [mode],
     );
+    // const storedTheme = Cookies.get<'light' | 'dark'>('theme') || 'dark'; // Get the stored theme from cookies, dark if not found
+    // const [mode, setMode] = React.useState<'light' | 'dark'>('dark'); // default is storedTheme
+    // const colorMode = React.useMemo(
+    //     () => ({
+    //         toggleColorMode: () => {
+    //           // setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+
+    //           // Toggle the theme mode and store it in local storage.
+    //           const newMode = mode === "light" ? "dark" : "light";
+    //           try {
+    //               localStorage?.setItem("theme", newMode);
+    //           } catch (error) {
+    //             console.log(error);
+    //           }
+    //           setMode(newMode);
+    //           // const newMode = mode === 'light' ? 'dark' : 'light';
+    //           // // save the new theme to cookies
+    //           // Cookies.set('theme', newMode);
+    //           // setMode(newMode)
+    //         },
+    //     }),
+    //     [mode],
+    // );
 
     // ! passing this as creating a mode on the fly was resulting in a default dark - light modes from MUI 
     const theme = React.useMemo(

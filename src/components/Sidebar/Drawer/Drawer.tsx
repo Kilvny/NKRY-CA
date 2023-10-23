@@ -26,6 +26,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { usePathname } from 'next/dist/client/components/navigation';
 
 const drawerWidth = 240;
 
@@ -62,7 +63,8 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
 export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {open: boolean, handleDrawerClose: React.ReactEventHandler, ref?: React.MutableRefObject<null>} ) {
   const theme = useTheme();
   const mobileCheck = useMediaQuery(tabletSize)
-
+  const pathname = usePathname();
+  const isOnNKRY_CA = pathname?.startsWith('/nkry-ca');
 
   const routes: string[] = ['analytics', 'invoices', 'manage-employee', 'settings', '']
   const routeTranslations: string[] = ['Analytics', 'Invoices', 'Manage Employees', 'Settings', 'Sign Out']
@@ -82,46 +84,60 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
   }
 
   return (
-
-      <Drawer
-        sx={{
+    <Drawer
+      sx={{
+        width: drawerWidth,
+        flexShrink: 1,
+        "& .MuiDrawer-paper": {
           width: drawerWidth,
-          flexShrink: 1,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            top: open ? (mobileCheck ? 64 : 57) : 0
-
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-        // ref={ref}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          {routeTranslations.map((text, index) => (
-            <ListItem key={text} disablePadding onClick={(e) => {handleOnClickIcon(e,text)}}>
-              <Link href={`/dashboard/${encodeURIComponent(routes[index])}`} style={{textDecoration: 'none', color: theme.palette.text.secondary}}>
-                <ListItemButton>
-                    <ListItemIcon>
-                    {routeIcons[index]}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                </ListItemButton>
-              </Link>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-
-      </Drawer>
-
+          boxSizing: "border-box",
+          top: open ? (mobileCheck ? 64 : 57) : 0,
+        },
+      }}
+      variant="persistent"
+      anchor="left"
+      open={open}
+      // ref={ref}
+    >
+      <DrawerHeader>
+        <IconButton onClick={handleDrawerClose}>
+          {theme.direction === "ltr" ? (
+            <ChevronLeftIcon />
+          ) : (
+            <ChevronRightIcon />
+          )}
+        </IconButton>
+      </DrawerHeader>
+      <Divider />
+      <List>
+        {routeTranslations.map((text, index) => (
+          <ListItem
+            key={text}
+            disablePadding
+            onClick={(e) => {
+              handleOnClickIcon(e, text);
+            }}
+          >
+            <Link
+              href={`${
+                isOnNKRY_CA
+                  ? "/nkry-ca/dashboard/" + encodeURIComponent(routes[index])
+                  : "/workers-manager/dashboard/" + encodeURIComponent(routes[index])
+              }`}
+              style={{
+                textDecoration: "none",
+                color: theme.palette.text.secondary,
+              }}
+            >
+              <ListItemButton>
+                <ListItemIcon>{routeIcons[index]}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+    </Drawer>
   );
 }

@@ -172,7 +172,7 @@ const TaxInvoice: React.FC<TaxInvoiceOptions> = (props) => {
     <>
       <Box sx={{display: 'flex', flexDirection: 'row', alignContent: 'center'}}>
         <Button 
-        href='/customer-service/invoices'
+        href='/nkry-ca/customer-service/invoices'
         variant='text'
         color='info'
         ><KeyboardDoubleArrowLeftIcon / > All invoices

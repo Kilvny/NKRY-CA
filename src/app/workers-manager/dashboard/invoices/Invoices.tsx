@@ -23,7 +23,7 @@ const Invoices = () => {
           color='success'
           sx={{m:1, p:1}}
           size='small'
-          href='/customer-service/invoices/new'
+          href='/workers-manager/customer-service/invoices/new'
           >
           <AddOutlinedIcon /> New Invoice
           </Button>
