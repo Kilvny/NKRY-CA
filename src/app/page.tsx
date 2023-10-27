@@ -70,7 +70,7 @@ const LandingPage = () => {
     const userToken = token
   if (userToken) {
     localStorage.setItem("userToken", userToken);
-    console.log("User token saved to localStorage:", userToken);
+    // console.log("User token saved to localStorage:", userToken);
   } else {
     console.log("User token is not available or empty.");
   }

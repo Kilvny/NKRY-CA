@@ -76,12 +76,23 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
     <LogoutOutlinedIcon key={4} color='error' />
   ]
 
+  let signOutClicked: boolean = false;
+
   const handleOnClickIcon = (e:any, text: string ) => {
     if (text === "Sign Out") {
+      signOutClicked = !signOutClicked; // raise a flag that signout was clicked
+      
+      setTimeout(() => {
         signOut()
+      }, 3000);
+
     }
     handleDrawerClose(e)
   }
+  
+  React.useEffect(()=> {
+    localStorage.removeItem("userToken")
+  }, [signOutClicked])
 
   return (
     <Drawer
