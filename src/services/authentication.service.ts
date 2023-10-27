@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { Awaitable, DefaultUser } from 'next-auth';
+import * as fs from 'fs';
+
 
 // Set a global default header for Axios
 
@@ -7,10 +9,15 @@ import { Awaitable, DefaultUser } from 'next-auth';
 interface User extends DefaultUser {
     id: string;
     username: string;
-    token: string;
+    token?: string;
   };
 
 const apiUrl = process.env?.apiUrl
+let user: User = {
+  id: "",
+  username: "data.username",
+  token: ""
+};
   
   // Function to handle user login
   export const login = async (username: string, password: string): Promise<User | null> => {
@@ -29,14 +36,26 @@ const apiUrl = process.env?.apiUrl
 
       if (response.status == 200) {
           const token = await response.text();
-          console.log(token)
+          console.log("Token is... : ", token)
 
+          // Create a JSON object with the token
+          const data = { token };
           
+          // Convert the JSON object to a string
+          const jsonData = JSON.stringify(data);
+          
+          // Define the file path
+          const filePath = './token.json';
+          
+          // Write the JSON data to the file
+          fs.writeFileSync(filePath, jsonData);
+          
+          console.log("Token has been written to token.json");
         // const data = await response.json();
 
         // Store the user data and token in localStorage
         // await console.log(data)
-        const user: User = {
+         user = {
           id: "",
           username: "data.username",
           token: token,
@@ -69,6 +88,6 @@ const apiUrl = process.env?.apiUrl
   export const getCurrentUser = (): User | null => {
     // const userJson = localStorage.getItem('user');
     // return userJson ? JSON.parse(userJson) : null;
-    return null;
+    return user;
   };
   

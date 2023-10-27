@@ -1,11 +1,12 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Box, Typography, TextField, Button, CircularProgress } from "@mui/material";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import scss from "./SignIn.module.scss"
 import { User } from "next-auth";
+import { getCurrentUser } from "@/services/authentication.service";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +18,29 @@ const SignIn = () => {
   const searchParams = useSearchParams()?.get("callbackUrl");
   const callbackUrl = decodeURI(searchParams || "/");
   
+  
+  let result: any = {};
+
+  useEffect(() => {
+    console.log("useEffect is running");
+
+    const userToken = getCurrentUser()?.token;
+    if (userToken) {
+      localStorage.setItem("userToken", userToken);
+      console.log("User token saved to localStorage:", userToken);
+    } else {
+      console.log("User token is not available or empty.");
+    }
+  }, []);
+  // useEffect(()=> {
+  //   setTimeout(() => {
+  //     let str: string = getCurrentUser()?.token + "";
+  //     localStorage.setItem("userToken", str);
+  //     console.log(getCurrentUser()?.token);
+
+  //   }, 3000);
+  // },[result])
+
   const isEmailValid = () => {
     // Simple email validation check
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -39,11 +63,10 @@ const SignIn = () => {
       setError("Password must be at least 8 characters long.");
       return;
     }
-
     try {
       setError("");
       setIsLoading(true);
-      const result = await signIn("credentials", {
+      result = await signIn("credentials", {
         email,
         password,
         // callbackUrl: callbackUrl || "/",
@@ -59,8 +82,12 @@ const SignIn = () => {
         const currentUser = localStorage.getItem("user")
     }
     //   if (result?.ok) {
-      localStorage.setItem("user", JSON.stringify(result))
-      router.push(callbackUrl);
+      console.log(result)
+
+      setTimeout(() => {
+
+        router.push(callbackUrl);
+      }, 10000);
         // router.push("/");
     //   }
     } catch (error) {

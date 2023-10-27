@@ -70,6 +70,19 @@ export const authOptions: NextAuthOptions = {
     signIn: "/signin",
   },
   callbacks: {
+    session({ session, token, user }) {
+      if (token) {
+        // Set the token in the session if it exists
+        session.user = token; // Assuming the token is available as `token` from your login function
+      }
+
+      if (user) {
+        // Update the session user object
+        session.user = user;
+      }
+
+      return session;
+    },
 //     async jwt({ token, user }) {
 //       /* Step 1: update the token based on the user object */
 //       if (user) {
@@ -77,14 +90,14 @@ export const authOptions: NextAuthOptions = {
 //       }
 //       return token;
 //     },
-    session({ session, token, user }) {
-      /* Step 2: update the session.user based on the token object */
-      if (token && session.user) {
-        session.user.role = token?.role;
-        session.user = user
-      }
-      return session;
-    },
+    // session({ session, token, user }) {
+    //   /* Step 2: update the session.user based on the token object */
+    //   if (token && session.user) {
+    //     session.user.role = token?.role;
+    //     session.user = user
+    //   }
+    //   return session;
+    // },
   },
 };
 

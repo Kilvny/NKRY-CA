@@ -7,6 +7,8 @@ import Link from "next/link";
 
 import { Theme } from '@mui/material/styles';
 import { useTheme, DefaultTheme } from "@mui/styles";
+import { getCurrentUser } from "@/services/authentication.service";
+import { token } from "../../token.json"
 
 // declare module '@mui/styles/defaultTheme' {
 //   interface DefaultTheme extends Theme {}
@@ -65,6 +67,13 @@ const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    const userToken = token
+  if (userToken) {
+    localStorage.setItem("userToken", userToken);
+    console.log("User token saved to localStorage:", userToken);
+  } else {
+    console.log("User token is not available or empty.");
+  }
     const delay = setTimeout(() => {
         setIsLoading(false);
       }, 3000);
