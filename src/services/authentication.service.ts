@@ -12,7 +12,7 @@ interface User extends DefaultUser {
     token?: string;
   };
 
-const apiUrl = process.env?.apiUrl
+const apiUrl = 'https://localhost:7112/api'
 let user: User = {
   id: "",
   username: "data.username",
@@ -33,6 +33,7 @@ let user: User = {
         },
         body: JSON.stringify({ "Email" : username, password }),
       });
+      console.log(response);
 
       if (response.status == 200) {
           const token = await response.text();
@@ -61,12 +62,12 @@ let user: User = {
           token: token,
         };
         // localStorage.setItem("user", JSON.stringify(user));
-        axios.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
-        const _user = await axios.get(`${apiUrl}/Users?SearchQuery=${username}`)
-        const userResult = await _user.data;
-        user.username = userResult.Email;
-        user.id = userResult.Id;
-        user.email = userResult.Email;
+        // axios.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
+        const _user = await fetch(`${apiUrl}/Users?SearchQuery=${username}`).then(res => res.text());
+        const userResult = await _user;
+        user.username = userResult;
+        user.id = userResult;
+        user.email = userResult;
         return user;
       } else {
         console.log("login was not successful");

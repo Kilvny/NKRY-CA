@@ -1,5 +1,5 @@
 'use client'
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
@@ -18,6 +18,8 @@ import { InvoiceDTO } from '@/DTO\'s/Invoice';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useSession } from 'next-auth/react';
+import { postInvoice } from '@/services/invoices.service';
+import { token as TOKEN } from "../../../../../../token.json";
 
 
 
@@ -35,9 +37,7 @@ const style = {
   };
   
 
-const apiUrl: string = process.env.apiUrl
-// const sessionToken = Cookies.get('next-auth.session-token');
-const sessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNoYWxsb3dAcmVzdW1lLmNvIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJhMWVhZTNkMi1mYWFlLTQ2NmQtOTdiZi03YjI3ZmViODhiOTUiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNzAwNjY5NTk3LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyNTgiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUyNTgifQ.4pVRG5DBB_tIceRkKR-5iKsEJ3VARXaaSzjHD5BNqWM"
+
 
 
 
@@ -57,10 +57,19 @@ const New = () => {
     const [paidAmount, setPaidAmount] = useState<number>(0);
     const [remainingAmount, setRemainingAmount] = useState<number>(0);
 
-    const session = useSession();
-    
+    const [token, setToken] = useState<string | null>("");
 
-    const data: InvoiceDTO = {
+    useEffect(() => {
+      const userToken = TOKEN
+      if (userToken) {
+        localStorage.setItem("userToken", userToken);
+        // console.log("User token saved to localStorage:", userToken);
+      } 
+      let token: string | null = localStorage.getItem("userToken");
+      setToken(token);
+    }, [color, billTo, items, quantity, description, price, remainingAmount, paymentStatus, paidAmount, token])
+
+     const data: InvoiceDTO = {
       billTo: billTo,
       order: {
         items: items,
@@ -96,27 +105,16 @@ const New = () => {
     try {
       // Send the formData to the API
       // Check if the token exists
-      if (!sessionToken) {
+      if (!token) {
         // Handle the case where there's no token (e.g., redirect to login)
         console.error('No token found.');
         return;
       }
 
-      // Create a headers object with the Authorization header
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionToken}`,
-      };
-      const response = await axios.post("https://localhost:7112/api"+"/invoices" ,{
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(data),
-      }
-      
-      );
+      const postedInvoice = postInvoice(data, token);
 
       // Handle the response as needed (e.g., show a success message)
-      console.log('Response:', response.data);
+      console.log('Response:', postedInvoice);
 
       // Clear the form if needed
       // setBillTo("")
