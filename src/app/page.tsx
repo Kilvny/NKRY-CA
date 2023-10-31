@@ -97,7 +97,7 @@ const LandingPage = () => {
         NKRY
       </Typography>
       <div className={classes.options}>
-        <Link href="/workers-manager" style={{ textDecoration: 'none' }}>
+        <Link href="/nkry-ca/manage-employee" style={{ textDecoration: 'none' }}>
           <Button variant="text" size='large' color="success" className={classes.optionButton}>
             Manage Workers, Expenses
           </Button>

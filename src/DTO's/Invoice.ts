@@ -6,5 +6,11 @@ export interface InvoiceDTO {
       description: string;
       price: number;
       paidAmount: number;
+      color: string;
+      size: {
+        height: number;
+        width: number;
+        depth: number;
+      }
     };
   }

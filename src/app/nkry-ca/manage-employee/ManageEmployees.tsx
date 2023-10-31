@@ -14,7 +14,9 @@ import {
   DialogActions,
   Button,
   TextField,
+  Typography,
 } from "@mui/material";
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 
 const employees = [
   {
@@ -128,6 +130,16 @@ const ManageEmployees = () => {
 
   return (
     <div style={{ height: 400, width: "100%" }}>
+          <Typography >All Employees</Typography>
+          <Button
+          variant='outlined'
+          color='success'
+          sx={{m:1, p:1}}
+          size='small'
+          href='/nkry-ca/manage-employee/new'
+          >
+          <AddOutlinedIcon /> New Employee
+          </Button>
       <DataGrid
         rows={employees.map((employee, index) => ({
           ...employee,

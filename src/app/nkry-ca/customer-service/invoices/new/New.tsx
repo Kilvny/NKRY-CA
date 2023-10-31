@@ -57,6 +57,10 @@ const New = () => {
     const [paidAmount, setPaidAmount] = useState<number>(0);
     const [remainingAmount, setRemainingAmount] = useState<number>(0);
 
+    const [height, setHeight] = useState<number>(0);
+    const [width, setWidth] = useState<number>(0);
+    const [depth, setDepth] = useState<number>(0);
+
     const [token, setToken] = useState<string | null>("");
 
     useEffect(() => {
@@ -77,6 +81,12 @@ const New = () => {
         description: description,
         price: price,
         paidAmount: paidAmount,
+        color: color,
+        size: {
+          height: height,
+          width: width,
+          depth: depth
+        }
       }
     }
   
@@ -99,6 +109,21 @@ const New = () => {
     const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
       setPrice(parseFloat(e.target.value));
     };
+    const handleHeightChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setHeight(parseFloat(e.target.value));
+    };
+    const handleWidthChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setWidth(parseFloat(e.target.value));
+    };
+    const handleDepthChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setDepth(parseFloat(e.target.value));
+    };
+
+    const handleColorChange = (newColor: string) => {
+      console.log('Color changed to:', newColor);
+      setColor(newColor);
+    };
+    
 
   const handleSave = async () => {
     console.log(data);
@@ -249,6 +274,8 @@ const New = () => {
             variant="outlined"
             margin="none"
             size="small"
+            value={height}
+            onChange={handleHeightChange}
 
           />
           <TextField
@@ -256,6 +283,8 @@ const New = () => {
             variant="outlined"
             margin="none"
             size="small"
+            value={width}
+            onChange={handleWidthChange}
 
           />
           <TextField
@@ -263,6 +292,8 @@ const New = () => {
             variant="outlined"
             margin="none"
             size="small"
+            value={depth}
+            onChange={handleDepthChange}
             
             />
         </Box>
@@ -290,7 +321,7 @@ const New = () => {
                 Select Color
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                <HexColorPicker color={color} onChange={setColor} />
+                <HexColorPicker color={color} onChange={handleColorChange} />
                 </Typography>
             </Box>
             </Modal>
