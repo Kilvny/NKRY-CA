@@ -121,8 +121,12 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
       </DrawerHeader>
       <Divider />
       <List>
-        {routeTranslations.map((text, index) => (
-          <ListItem
+        {routeTranslations.map((text, index) => {
+          let nkrycaUrl = index === 2 ? "/nkry-ca/" : "/nkry-ca/dashboard/"
+          if (index === 1) {
+            nkrycaUrl = "/nkry-ca/customer-service/"
+          }
+          return (<ListItem
             key={text}
             disablePadding
             onClick={(e) => {
@@ -132,7 +136,7 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
             <Link
               href={`${
                 isOnNKRY_CA
-                  ? "/nkry-ca/dashboard/" + encodeURIComponent(routes[index])
+                  ? nkrycaUrl + encodeURIComponent(routes[index])
                   : "/workers-manager/dashboard/" + encodeURIComponent(routes[index])
               }`}
               style={{
@@ -145,8 +149,8 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
                 <ListItemText primary={text} />
               </ListItemButton>
             </Link>
-          </ListItem>
-        ))}
+          </ListItem>)
+        })}
       </List>
       <Divider />
     </Drawer>

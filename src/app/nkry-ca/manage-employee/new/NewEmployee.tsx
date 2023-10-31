@@ -61,10 +61,11 @@ const New = () => {
     const [passportNumber, setPassportNumber] = useState('');
     const [paidAmount, setPaidAmount] = useState('');
     const [remainingAmount, setRemainingAmount] = useState('');
-
-    // const [height, setHeight] = useState<number>(0);
-    // const [width, setWidth] = useState<number>(0);
-    // const [depth, setDepth] = useState<number>(0);
+    // car details
+    const [company, setCompany] = useState<string>("")
+    const [model, setModel] = useState<string>("")
+    const [manfactureYear, setManfactureYear] = useState<number>(1900)
+    const [plateNumber, setPlateNumber] = useState<string>("")
 
     const [token, setToken] = useState<string | null>("");
 
@@ -83,10 +84,16 @@ const New = () => {
       lastName: lastName,
       address: address,
       phoneNumber: phoneNumber, 
-      employeeId: employeeId,
+      employeeIdNumber: employeeId,
       passportNumber: passportNumber,
       nationality: nationality,
-      job: job
+      job: job,
+      car: {
+        company: company,
+        model: model,
+        manfactureYear: manfactureYear,
+        plateNumber: plateNumber
+      }
     }
   
     const handlefirstNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +120,19 @@ const New = () => {
     };
     const handleJobChange = (e: ChangeEvent<HTMLInputElement>) => {
       setJob(e.target.value);
+    };
+    // car
+    const handleCompanyChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setCompany(e.target.value);
+    };
+    const handleModelChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setModel(e.target.value);
+    };
+    const handleManfactureYearChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setManfactureYear(parseInt(e.target.value));
+    };
+    const handlePlateNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setPlateNumber(e.target.value);
     };
     // const handleHeightChange = (e: ChangeEvent<HTMLInputElement>) => {
     //   setHeight(e.target.value);
@@ -318,6 +338,55 @@ const New = () => {
         value={passportNumber}
         onChange={handlepassportNumberChange}
       />
+
+
+      {/* car details  */}
+      {<Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%', marginTop: '10px'}}>
+      <TextField
+        name="company"
+        label="Car Company"
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        value={company}
+        onChange={handleCompanyChange}
+        // sx={{width: "50%"}}
+      />
+      <TextField
+        label="Car Model"
+        name="model"
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        value={model}
+        onChange={handleModelChange}
+        // sx={{width: "50%"}}
+
+      />
+      <TextField
+        label="Manfacture Year"
+        name="manfactureYear"
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        value={manfactureYear}
+        onChange={handleManfactureYearChange}
+        // sx={{width: "50%"}}
+
+      />
+      <TextField
+        label="Plate Numbers"
+        name="plateNumber"
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        value={plateNumber}
+        onChange={handlePlateNumberChange}
+        // sx={{width: "50%"}}
+
+      />
+
+      </Box> }
 
       {/* Save button */}
       <Button color="success" variant="contained" size="large" onClick={handleSave}>
