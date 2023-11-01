@@ -13,5 +13,5 @@ export interface EmployeeDTO {
         model: string,
         manfactureYear: number,
         plateNumber: string
-    }
+    } | null,
 }

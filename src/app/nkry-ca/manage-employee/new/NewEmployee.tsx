@@ -161,6 +161,10 @@ const New = () => {
         return;
       }
 
+      if(data?.car?.company.trim() === '' && data?.car?.model.trim() === '' && data?.car?.manfactureYear === 1900 && data?.car?.plateNumber.trim() === '') {
+        data.car = null;
+      }
+
       const postedEmployee = postEmployee(data, token);
 
       // Handle the response as needed (e.g., show a success message)
