@@ -11,18 +11,13 @@ import Select from '@mui/material/Select';
 import IconButton from '@mui/material/IconButton';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import styles from './invoicesNew.module.scss'; // Import the SCSS module
-import { HexColorPicker } from "react-colorful";
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import { InvoiceDTO } from '@/DTO\'s/Invoice';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { useSession } from 'next-auth/react';
-import { postInvoice } from '@/services/invoices.service';
 import { token as TOKEN } from "../../../../../token.json";
 import { EmployeeDTO } from '@/DTO\'s/Employee';
 import { postEmployee } from '@/services/employee.services';
-import { jaJP } from '@mui/x-data-grid';
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+
 
 
 
@@ -236,6 +231,15 @@ const New = () => {
 
   return (
     <Box className={styles.container} sx={{ p: 2 , display: 'flex', flexWrap: 'wrap'}}>
+            <Box sx={{display: 'flex', flexDirection: 'row', alignContent: 'center'}}>
+        <Button 
+        href='/nkry-ca/manage-employee'
+        variant='text'
+        color='info'
+        ><KeyboardDoubleArrowLeftIcon / > Back to all employees
+        </Button>
+
+      </Box>
       <h2 className={styles.mainTitle}>Create New Employee</h2>
       {/* Employee Name fields */}
       {<Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%'}}>

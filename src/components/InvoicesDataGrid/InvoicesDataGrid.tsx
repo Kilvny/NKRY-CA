@@ -22,7 +22,7 @@ const renderEditCell = (params: GridRenderCellParams) => {
     const invoiceId = params?.row?.invoiceNumber
     return (
         <Link
-        href={`/customer-service/invoices/edit/${encodeURIComponent(invoiceId)}`}
+        href={`/nkry-ca/customer-service/invoices/edit/${encodeURIComponent(invoiceId)}`}
         >
           <EditOutlinedIcon color='warning' />
         </Link>
