@@ -24,6 +24,7 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import MenuItem from '@/components/MenuItem';
 import { MenuItemOptions } from '@/components/MenuItem/MenuItem';
+import { useParams } from 'next/navigation';
 // import { Facebook, GitHub, Twitter, Instagram } from '@mui/icons-material';
 
 
@@ -48,7 +49,7 @@ const menuItemOptions: MenuItemOptions = {
 }
 
 export default function About() {
-    const employeeData = {
+    const employeeData = { // mock data
         "الإسم": "Johnatan Smith",
         "رقم الهاتف": "0503498748",
         "المدة المتبقية في الإقامة": getRemainingMonthsAndDays('2024-12-31'),
@@ -56,8 +57,15 @@ export default function About() {
         "استحاق تذاكر السفر": getRemainingMonthsAndDays('2024-06-01')
     }
 
+    // const params = useParams();
+    // const employeeId = params?.employeeId
+    
+    menuItemOptions.option1.url = `/add-details`
+    menuItemOptions.option2.url = `/add-details`
+    menuItemOptions.option3.url = `/add-details`
+
   return (
-    <div>
+    <>
       <Box
         sx={{ display: "flex", flexDirection: "row", alignContent: "center" }}
       >
@@ -173,7 +181,7 @@ export default function About() {
                 <CardContent>
                   {Object.entries(employeeData).map(([key, value]) => {
                     return (
-                      <>
+                      <div key={key}>
                         <Grid container>
                           <Grid item xs={3}>
                             <Typography variant="body1" color="textSecondary">
@@ -185,7 +193,7 @@ export default function About() {
                           </Grid>
                         </Grid>
                         <hr />
-                      </>
+                      </div>
                     );
                   })}
 
@@ -225,7 +233,7 @@ export default function About() {
           </Grid>
         </Container>
       </section>
-    </div>
+    </>
   );
 }
 

@@ -14,15 +14,15 @@ type Props = {};
 
 const options = [
   {
-    value: 'Iqama',
+    value: 'visaExpiryDate',
     label: 'إضافة تاريخ إنتهاء الإقامة',
   },
   {
-    value: 'flight',
+    value: 'flightTicketsDueDate',
     label: 'إضافة تاريخ إستحقاق تذاكر الطيران',
   },
   {
-    value: 'dues',
+    value: 'duesPayDate',
     label: 'إضافة موعد صرف المستحقات',
   },
 ];
@@ -102,9 +102,9 @@ const AddDetails = (props: Props) => {
         <Button
           variant="contained"
           color="error" // Error color
-          onClick={handleCancel}
+        //   onClick={handleCancel}
+          href="/nkry-ca/manage-employee/gas-agsasd-zxcasdeq-atq123fdv12-asfd/"
           style={{margin: '10px'}}
-
         >
           Cancel
         </Button>

@@ -10,6 +10,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'; // dots icon
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import FlightIcon from '@mui/icons-material/Flight';
+import { useRouter } from 'next/router';
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -82,12 +83,17 @@ export default function CustomizedMenus(props : MenuItemOptions) {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
+
   const handleClose = (url: string) => {
     setAnchorEl(null);
     // SyntheticBaseEvent  is passed when opening the menu & close it but not choosing an item
     if(typeof url === 'string') {
-        console.log(url); // TODO: handle navigation 
+         // TODO: handle navigation 
+        let link = encodeURI(window.location.href+url)
+        window.location.replace(link);
     }
+
   };
 
   return (
