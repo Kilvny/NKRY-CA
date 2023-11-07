@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
+import { useParams, useRouter } from "next/navigation";
 
 const employees = [
   {
@@ -44,6 +45,8 @@ const ManageEmployees = () => {
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [editedDepartment, setEditedDepartment] = useState("");
+
+  const router = useRouter();
   const [employees, setEmployees] = useState([
     {
       id: "1",
@@ -64,6 +67,7 @@ const ManageEmployees = () => {
     // Add more employee data
   ]);
 
+
   useEffect(() => {
     fetch("https://dummyjson.com/users")
       .then((res) => res.json())
@@ -71,12 +75,13 @@ const ManageEmployees = () => {
   }, []); // Empty dependency array to ensure the effect runs only once on mount
 
   const handleEditClick = (
-    userId: any,
+    employeeId: any,
     name: string,
     email: string,
     department: string
   ) => {
-    setEditUserId(userId);
+    setEditUserId(employeeId);
+    router.push(`/nkry-ca/manage-employee/${employeeId}`)
     setEditedName(name);
     setEditedEmail(email);
     setEditedDepartment(department);
@@ -154,7 +159,7 @@ const ManageEmployees = () => {
         }}
         pageSizeOptions={[5, 10, 25]}
       />
-
+{/* // todo: remove
       <Dialog open={editUserId !== null}>
         <DialogTitle>Edit User</DialogTitle>
         <DialogContent>
@@ -181,9 +186,84 @@ const ManageEmployees = () => {
           <Button onClick={handleSaveClick}>Save</Button>
           <Button onClick={handleCloseClick}>Close</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };
 
 export default ManageEmployees;
+
+
+/* @DATA Example
+[
+    {
+        "id": "b446ecc7-7a16-4802-a768-08dbda200d71",
+        "firstName": "Abdo",
+        "lastName": "Fatty",
+        "job": "Driver",
+        "nationality": "India",
+        "address": "New Orleans 5st. Est da15",
+        "phoneNumber": "09876543210",
+        "photo": null,
+        "employeeIdNumber": null,
+        "passportNumber": "A 2103 1231230",
+        "monthlyFinance": [],
+        "carId": null,
+        "car": null,
+        "personalDetails": null,
+        "fixedFinance": null,
+        "fixedExpnenses": []
+    },
+    {
+        "id": "7ceb2128-5aa5-4839-6b63-08dbdbb04fcd",
+        "firstName": "<string>",
+        "lastName": "<string>",
+        "job": "<string>",
+        "nationality": "<string>",
+        "address": "<string>",
+        "phoneNumber": "<string>",
+        "photo": "<string>",
+        "employeeIdNumber": "<string>",
+        "passportNumber": "<string>",
+        "monthlyFinance": [
+            {
+                "id": "142443a1-6d09-4d91-7d25-08dbdd7e36fb",
+                "deliveriesMade": 1,
+                "totalSalary": null,
+                "dueMonth": 11,
+                "dueYear": 2023,
+                "monthlyExpnenses": [
+                    {
+                        "id": "cb54a305-b009-475d-83ef-08dbdd8533c8",
+                        "name": "Khasm 3adam endbat",
+                        "dueDate": "2023-11-04T00:00:00",
+                        "amount": 150.00,
+                        "employeeFinanceId": "142443a1-6d09-4d91-7d25-08dbdd7e36fb"
+                    }
+                ],
+                "employeeId": "7ceb2128-5aa5-4839-6b63-08dbdbb04fcd"
+            },
+            {
+                "id": "146684f3-92b8-401a-7d26-08dbdd7e36fb",
+                "deliveriesMade": 1,
+                "totalSalary": 0.00,
+                "dueMonth": 11,
+                "dueYear": 2023,
+                "monthlyExpnenses": [],
+                "employeeId": "7ceb2128-5aa5-4839-6b63-08dbdbb04fcd"
+            }
+        ],
+        "carId": "fdace062-d0b8-451c-7ae5-08dbdbb04f9a",
+        "car": {
+            "id": "fdace062-d0b8-451c-7ae5-08dbdbb04f9a",
+            "company": "<string>",
+            "model": "<string>",
+            "manfactureYear": 2022,
+            "plateNumber": "<string>"
+        },
+        "personalDetails": null,
+        "fixedFinance": null,
+        "fixedExpnenses": []
+    }
+]
+*/ 

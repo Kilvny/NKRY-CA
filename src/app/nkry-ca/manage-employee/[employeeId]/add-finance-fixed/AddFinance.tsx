@@ -2,29 +2,28 @@
 import React, { useState } from 'react';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Button, IconButton, TextField } from '@mui/material';
+import dayjs from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Button, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
 type Props = {};
 // here we should get the expenses with filter ?names=true in the api call 
 const options = [
   {
     value: 'visaExpiryDate',
-    label: ' مصروفات بنزين',
+    label: 'إضافة تكاليف تجديد الإقامة',
   },
   {
     value: 'flightTicketsDueDate',
-    label: ' مصروفات علاج',
+    label: 'إضافة تكاليف رخص العمل',
   },
   {
     value: 'duesPayDate',
-    label: ' مصروفات التأمينات الاجتماعية',
+    label: 'إضافة مصروفات التأمينات الاجتماعية',
   },
 ];
 
@@ -32,8 +31,6 @@ const AddFinance = (props: Props) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [value, setValue] = useState<Date | null>(new Date());
-  const [openDialog, setOpenDialog] = useState(false);
-  const [newName, setNewName] = useState('');
 
   const handleOptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
@@ -57,38 +54,13 @@ const AddFinance = (props: Props) => {
     // You can use React Router or other navigation mechanisms for this.
   };
 
-  // dialog methods
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  const handleDialogSave = () => {
-    // Implement the logic to save the name here (e.g., send an API request)
-    // After saving, close the dialog
-    handleCloseDialog();
-  };
-
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="100vh">
       <Box textAlign="center">
-        <h2>Add Expense to the current month - إضافة مصروفات للشهر الحالي</h2>
+        <h2>Add Expnse</h2>
       </Box>
       <Box m={2} display="flex" flexDirection="column" alignItems="space-between" maxWidth="300px">
-        <Box m={2} display="flex" flexDirection="row" alignContent="center" alignItems="center">
-          <label>Select an option:</label> 
-          <IconButton
-          color="primary"
-          onClick={handleOpenDialog}
-          style={{ margin: '10px', borderRadius: '50%' }}
-        >
-          <ControlPointIcon />
-        </IconButton>
-        </Box>
-        
+        <label>Select an option:</label>
         <Select
           value={selectedOption}
           onChange={handleOptionChange}
@@ -107,16 +79,16 @@ const AddFinance = (props: Props) => {
           ))
           }
         </Select>
-        {/* <label>Select a date:</label>
+        <label>Select a date:</label>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={['DatePicker', 'DatePicker']}>
             <DatePicker
-              label="Controlled picker"
+              label="Due Date - تاريخ الإستحقاق"
               value={dayjs(value)}
               onChange={(newValue) => setValue(newValue)}
             />
           </DemoContainer>
-        </LocalizationProvider> */}
+        </LocalizationProvider>
           <TextField
           label="Amount القيمة"
           name="job"
@@ -129,34 +101,6 @@ const AddFinance = (props: Props) => {
           // sx={{width: "50%"}}
 
         />
-       {/* Add a button to open the dialog */}
-
-
-        {/* Dialog for adding a name */}
-        <Dialog open={openDialog} onClose={handleCloseDialog}>
-          <DialogTitle>Add Expense - إضافة نوع مصروفات جديد</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Enter a name and click Save to add it.
-            </DialogContentText>
-            <TextField
-              label="Name"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleDialogSave} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Box>
 
       {/* Action Buttons */}
