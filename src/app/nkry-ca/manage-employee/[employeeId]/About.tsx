@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   Grid,
@@ -17,16 +17,15 @@ import {
   Box,
   MenuItemProps,
 } from '@mui/material';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import InstagramIcon from '@mui/icons-material/Instagram';
+
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import MenuItem from '@/components/MenuItem';
 import { MenuItemOptions } from '@/components/MenuItem/MenuItem';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-// import { Facebook, GitHub, Twitter, Instagram } from '@mui/icons-material';
+import TOKEN from "../../../../../token.json"
+import { getEmployee } from '@/services/employee.services';
+import { EmployeeDTO } from '@/DTO\'s/Employee';
 
 
 const menuItemOptions: MenuItemOptions = {
@@ -50,14 +49,32 @@ const menuItemOptions: MenuItemOptions = {
 }
 
 export default function About() {
+  const [employee, setEmployee] = useState<EmployeeDTO>()
+
   const router = useRouter();
   const params = useParams();
-  const employeeId = params?.employeeId
+  const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
 
 
+
+  const token = TOKEN.token
+  useEffect(() => {
+    async function fetchEmployee() {
+      try {
+        const employeeData = await getEmployee(employeeId ,token);
+        setEmployee(employeeData);
+        console.log(employeeId);
+      } catch (error) {
+        console.error('Error fetching employee:', error);
+      }
+    }
+    
+    fetchEmployee();
+  }, [token, employeeId]);
+  console.log(employee);
     const employeeData = { // mock data
-        "الإسم": "Johnatan Smith",
-        "رقم الهاتف": "0503498748",
+        "الإسم": (employee?.firstName + " " + employee?.lastName),
+        "رقم الهاتف": employee?.phoneNumber,
         "المدة المتبقية في الإقامة": getRemainingMonthsAndDays('2024-12-31'),
         "موعد صرف مستحقات الأجازة": getRemainingMonthsAndDays('2026-01-01'),
         "استحاق تذاكر السفر": getRemainingMonthsAndDays('2024-06-01')
@@ -67,9 +84,6 @@ export default function About() {
       { expense: "تجديد اقامة", date: "2015-12-06", amount: "1500 SAR" },
       { expense: "تجديد تأمين", date: "2018-12-06", amount: "3550 SAR" },
     ];
-
-    // const params = useParams();
-    // const employeeId = params?.employeeId
     
     menuItemOptions.option1.url = `/add-details`
     menuItemOptions.option2.url = `/add-details`
@@ -132,21 +146,21 @@ export default function About() {
                     color="textSecondary"
                     sx={{ mb: 1 }}
                   >
-                    EMBLOYEE NAME - Driver
+                    {employee?.firstName + " " + employee?.lastName } - {employee?.job}
                   </Typography>
                   <Typography
                     variant="body2"
                     color="textSecondary"
                     sx={{ mb: 0.5 }}
                   >
-                    Bay Area, San Francisco, CA
+                    {employee?.address}
                   </Typography>
                   <Typography
                     variant="body2"
                     color="textSecondary"
                     sx={{ mb: 4 }}
                   >
-                    +96650577968
+                    {employee?.phoneNumber}
                   </Typography>
                   <Box
                     sx={{ display: "flex", justifyContent: "center", mb: 2 }}
@@ -232,9 +246,9 @@ export default function About() {
                       {/* Project status details */}
                       <Box>
                         <Typography variant="body2" color="textSecondary">
-                          Toyota H1 - 2021
+                          {employee?.car?.company +" - " + employee?.car?.model + " - " + employee?.car?.manfactureYear}
                         </Typography>
-                        <p>KSF 2406</p>
+                        <p>{employee?.car?.plateNumber ?? " "}</p>
                       </Box>
                     </CardContent>
                   </Card>

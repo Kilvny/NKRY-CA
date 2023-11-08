@@ -2,6 +2,58 @@ import { EmployeeDTO } from '@/DTO\'s/Employee';
 
 const apiUrl = 'https://localhost:7112/api'
 
+export const getAllEmployees = async (token: string): Promise<EmployeeDTO[]> => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+
+    const response = await fetch(`${apiUrl}/employees`, requestOptions)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json(); // Parse the response JSON
+      return data // Parse the response JSON
+
+  } catch (error) {
+    console.log(error);
+    return Promise.reject(error); // Return a rejected Promise to signify an error
+  }
+
+
+}
+
+export const getEmployee = async (employeeId: string, token: string): Promise<EmployeeDTO> => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+
+    const response = await fetch(`${apiUrl}/employees/${employeeId}`, requestOptions)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json(); // Parse the response JSON
+      return data // Parse the response JSON
+
+  } catch (error) {
+    console.log(error);
+    return Promise.reject(error); // Return a rejected Promise to signify an error
+  }
+
+
+}
+
 export const postEmployee = async (data :EmployeeDTO, token: string ) : Promise<any> => {
 
     console.log(data, token);

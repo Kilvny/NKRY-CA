@@ -328,7 +328,7 @@ const New = () => {
       </Box>
       {/* employeeId field */}
       <TextField
-        label="employeeId"
+        label="Employee ID (Iqama or Visa)"
         name="employeeId"
         variant="outlined"
         fullWidth

@@ -18,6 +18,9 @@ import {
 } from "@mui/material";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 import { useParams, useRouter } from "next/navigation";
+import { getAllEmployees } from "@/services/employee.services";
+import { EmployeeDTO } from "@/DTO's/Employee";
+import TOKEN  from "../../../../token.json"
 
 const employees = [
   {
@@ -47,7 +50,8 @@ const ManageEmployees = () => {
   const [editedDepartment, setEditedDepartment] = useState("");
 
   const router = useRouter();
-  const [employees, setEmployees] = useState([
+  const [employees, setEmployees] = useState<EmployeeDTO[]>([]);
+  [
     {
       id: "1",
       username: "Metro",
@@ -65,26 +69,32 @@ const ManageEmployees = () => {
       gender: "HR",
     },
     // Add more employee data
-  ]);
-
-
+  ]
+  const token = TOKEN.token
   useEffect(() => {
-    fetch("https://dummyjson.com/users")
-      .then((res) => res.json())
-      .then((json) => setEmployees(json?.users));
-  }, []); // Empty dependency array to ensure the effect runs only once on mount
+    async function fetchEmployees() {
+      try {
+        const employeeData = await getAllEmployees(token);
+        setEmployees(employeeData);
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+      }
+    }
+
+    fetchEmployees();
+  }, [token]);
 
   const handleEditClick = (
     employeeId: any,
     name: string,
-    email: string,
-    department: string
+    email: string
+    // department: string
   ) => {
     setEditUserId(employeeId);
     router.push(`/nkry-ca/manage-employee/${employeeId}`)
     setEditedName(name);
     setEditedEmail(email);
-    setEditedDepartment(department);
+    // setEditedDepartment(department);
   };
 
   const handleSaveClick = () => {
@@ -105,9 +115,9 @@ const ManageEmployees = () => {
         onClick={() =>
           handleEditClick(
             params.row.id,
-            params.row.username,
-            params.row.email,
-            params.row.gender
+            params.row.firstName,
+            params.row.email
+            // params.row.gender
           )
         }
       >
@@ -119,12 +129,14 @@ const ManageEmployees = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 50 },
-    { field: "username", headerName: "Name", width: 150 },
-    { field: "email", headerName: "Email", width: 150 },
-    { field: "phone", headerName: "Phone Number", width: 150 },
-    { field: "password", headerName: "password", width: 100 },
-    { field: "gender", headerName: "gender", width: 150 },
+    // { field: "id", headerName: "ID", width: 50 },
+    { field: "ido", headerName: "ID",width: 50},
+    { field: "firstName", headerName: "Name", width: 150 },
+    { field: "nationality", headerName: "Nationality", width: 150 },
+    { field: "phoneNumber", headerName: "Phone Number", width: 150 },
+    { field: "job", headerName: "Job", width: 100 },
+    { field: "address", headerName: "Address", width: 250 },
+    { field: "passportNumber", headerName: "Passport Number", width: 150 },
     {
       field: "actions",
       headerName: "Actions",
@@ -148,7 +160,7 @@ const ManageEmployees = () => {
       <DataGrid
         rows={employees.map((employee, index) => ({
           ...employee,
-          //   actions: index + 1, // Assign a unique ID to each row
+            ido: index + 1, // Assign a unique ID to each row
         }))}
         columns={columns}
         slots={{
@@ -159,34 +171,6 @@ const ManageEmployees = () => {
         }}
         pageSizeOptions={[5, 10, 25]}
       />
-{/* // todo: remove
-      <Dialog open={editUserId !== null}>
-        <DialogTitle>Edit User</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Name"
-            fullWidth
-            value={editedName}
-            onChange={(e) => setEditedName(e.target.value)}
-          />
-          <TextField
-            label="Email"
-            fullWidth
-            value={editedEmail}
-            onChange={(e) => setEditedEmail(e.target.value)}
-          />
-          <TextField
-            label="Department"
-            fullWidth
-            value={editedDepartment}
-            onChange={(e) => setEditedDepartment(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleSaveClick}>Save</Button>
-          <Button onClick={handleCloseClick}>Close</Button>
-        </DialogActions>
-      </Dialog> */}
     </div>
   );
 };
