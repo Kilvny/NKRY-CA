@@ -1,4 +1,4 @@
-import { InvoiceDTO } from '@/DTO\'s/Invoice';
+import { InvoiceDTO } from '@/DTOs/Invoice';
 import axios from 'axios';
 
 const apiUrl = 'https://localhost:7112/api'

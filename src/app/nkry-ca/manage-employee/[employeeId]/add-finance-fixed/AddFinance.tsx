@@ -9,6 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Button, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
+import { useParams } from 'next/navigation';
 
 type Props = {};
 // here we should get the expenses with filter ?names=true in the api call 
@@ -31,6 +32,9 @@ const AddFinance = (props: Props) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [value, setValue] = useState<Date | null>(new Date());
+
+  const params = useParams();
+  const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
 
   const handleOptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
@@ -117,7 +121,7 @@ const AddFinance = (props: Props) => {
           variant="contained"
           color="error" // Error color
         //   onClick={handleCancel}
-          href="/nkry-ca/manage-employee/gas-agsasd-zxcasdeq-atq123fdv12-asfd/"
+          href={"/nkry-ca/manage-employee/" + employeeId}
           style={{margin: '10px'}}
         >
           Cancel

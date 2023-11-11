@@ -14,9 +14,10 @@ import styles from './invoicesNew.module.scss'; // Import the SCSS module
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { token as TOKEN } from "../../../../../token.json";
-import { EmployeeDTO } from '@/DTO\'s/Employee';
+import { EmployeeDTO } from '@/DTOs/Employee';
 import { postEmployee } from '@/services/employee.services';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import { Card, CardContent } from '@mui/material';
 
 
 
@@ -40,11 +41,6 @@ const style = {
 
 
 const New = () => {
-    const [color, setColor] = useState("#b32aa9");
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-  
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [address, setAddress] = useState('');
@@ -52,15 +48,15 @@ const New = () => {
     const [employeeId, setEmployeeId] = useState('');
     const [nationality, setNationality] = useState('');
     const [job, setJob] = useState('');
-    // State to keep track of payment status
     const [passportNumber, setPassportNumber] = useState('');
-    const [paidAmount, setPaidAmount] = useState('');
-    const [remainingAmount, setRemainingAmount] = useState('');
     // car details
     const [company, setCompany] = useState<string>("")
     const [model, setModel] = useState<string>("")
     const [manfactureYear, setManfactureYear] = useState<number>(1900)
     const [plateNumber, setPlateNumber] = useState<string>("")
+
+    const [baseSalary, setBaseSalary] = useState<number>(0)
+    const [deliveryRate, setDeliveryRate] = useState<number>(0)
 
     const [token, setToken] = useState<string | null>("");
 
@@ -72,7 +68,7 @@ const New = () => {
       } 
       let token: string | null = localStorage.getItem("userToken");
       setToken(token);
-    }, [color, firstName, lastName, address, phoneNumber, employeeId, remainingAmount, passportNumber, paidAmount, token])
+    }, [firstName, lastName, address, phoneNumber, employeeId, passportNumber, token])
 
      const data: EmployeeDTO = {
       firstName: firstName,
@@ -88,6 +84,10 @@ const New = () => {
         model: model,
         manfactureYear: manfactureYear,
         plateNumber: plateNumber
+      },
+      fixedFinance: {
+        baseSalary: baseSalary,
+        deliveryRate: deliveryRate
       }
     }
   
@@ -129,20 +129,17 @@ const New = () => {
     const handlePlateNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
       setPlateNumber(e.target.value);
     };
-    // const handleHeightChange = (e: ChangeEvent<HTMLInputElement>) => {
-    //   setHeight(e.target.value);
-    // };
-    // const handleWidthChange = (e: ChangeEvent<HTMLInputElement>) => {
-    //   setWidth(parseFloat(e.target.value));
-    // };
-    // const handleDepthChange = (e: ChangeEvent<HTMLInputElement>) => {
-    //   setDepth(parseFloat(e.target.value));
-    // };
 
-    const handleColorChange = (newColor: string) => {
-      console.log('Color changed to:', newColor);
-      setColor(newColor);
+    const handleBaseSalaryChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setBaseSalary(parseFloat(e.target.value));
     };
+
+    const handleDeliveryRateChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setDeliveryRate(parseFloat(e.target.value));
+    };
+
+
+
     
 
   const handleSave = async () => {
@@ -396,9 +393,53 @@ const New = () => {
 
       </Box> }
 
+      {/* fixed finance section */}
+      <Card sx={{ marginTop: "10px", display: "block" }} className="mb-4">
+        <CardContent>
+          {/* <Typography variant="body2" color="textSecondary">
+                        
+                      </Typography> */}
+          <Box>
+            <TextField
+              label="Base Salary - الراتب الأساسي"
+              name="manfactureYear"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              value={baseSalary}
+              onChange={handleBaseSalaryChange}
+              type='number'
+            // sx={{width: "50%"}}
+
+            />
+            <TextField
+              label="Delivery Rate - معدل التوصيل للطلب الواحد"
+              name="plateNumber"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              value={deliveryRate}
+              onChange={handleDeliveryRateChange}
+            // sx={{width: "50%"}}
+
+            />
+          </Box>
+        </CardContent>
+      </Card>
+
       {/* Save button */}
-      <Button color="success" variant="contained" size="large" onClick={handleSave}>
+      <Button  color="success" variant="contained" size="large" onClick={handleSave}>
         Save
+      </Button>
+
+      <Button
+        variant="contained"
+        color="error" // Error color
+        //   onClick={handleCancel}
+        href="/nkry-ca/manage-employee"
+        style={{ margin: '10px' }}
+      >
+        Cancel
       </Button>
       {/* After that, the Tax invoice is generated and customer service is redirected to a screen where the Tax invoice is displayed. Also, the invoice appears on the invoices, and the craftsman can view it and add details such as the initial cost and stuff */}
       {/* Invoice status once it's created is NEW then if the craftsman added the initial cost it will be updated to Preparation, after that, the CS agent can change the status to "Out for delivery" "Received" */}

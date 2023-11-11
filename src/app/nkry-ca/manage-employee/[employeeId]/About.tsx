@@ -25,7 +25,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import TOKEN from "../../../../../token.json"
 import { getEmployee } from '@/services/employee.services';
-import { EmployeeDTO } from '@/DTO\'s/Employee';
+import { EmployeeDTO } from '@/DTOs/Employee';
 
 
 const menuItemOptions: MenuItemOptions = {

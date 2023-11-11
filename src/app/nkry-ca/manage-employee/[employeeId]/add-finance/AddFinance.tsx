@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Dialog from '@mui/material/Dialog';
@@ -10,35 +10,56 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Button, IconButton, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import { useParams, useRouter } from 'next/navigation';
+import { getAllExpenseNamesMonthly, postExpenseName } from '@/services/expenseName.services';
+import Token from '../../../../../../token.json'
+import { postExpense } from '@/services/expense.service';
+import { ExpenseDTO } from '@/DTOs/Expense';
+import { getCurrentDateTime } from '@/helper/dateTime';
 
 type Props = {};
 // here we should get the expenses with filter ?names=true in the api call 
-const options = [
-  {
-    value: 'visaExpiryDate',
-    label: ' مصروفات بنزين',
-  },
-  {
-    value: 'flightTicketsDueDate',
-    label: ' مصروفات علاج',
-  },
-  {
-    value: 'duesPayDate',
-    label: ' مصروفات التأمينات الاجتماعية',
-  },
-];
+
 
 const AddFinance = (props: Props) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [value, setValue] = useState<Date | null>(new Date());
+  const [amount, setAmount] = useState<number>(0);
   const [openDialog, setOpenDialog] = useState(false);
   const [newName, setNewName] = useState('');
+  const [expenseNames, setExpenseNames] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [clickFlag, setClickFlag] = useState(false)
 
+  const router = useRouter();
+  const params = useParams();
+  const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
+  
+  const token: string = Token?.token;
+  useEffect(() => {
+    async function fetchExpenseNames() {
+      try {
+        const namesData = await getAllExpenseNamesMonthly(token);
+        setExpenseNames(namesData);
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+      }
+    }
+
+    fetchExpenseNames();
+  }, [token, openDialog, clickFlag]);
+
+  
+  const handleOptionChangeClick = (event: any) => {
+    setClickFlag(!clickFlag)
+  }
   const handleOptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
   };
 
+  const handleAmountChange = (event: any) => {
+    setAmount(parseFloat(event.target.value));
+  };
   const handleDateChange = (date: Date | null) => {
     if (date) {
       setSelectedDate(date);
@@ -47,8 +68,20 @@ const AddFinance = (props: Props) => {
 
   const handleSave = () => {
     // Mock saving data by logging it
-    console.log('Selected Option:', selectedOption);
-    console.log('Selected Date:', selectedDate);
+    console.log('Selected Option:', selectedOption, "Amount:", amount);
+    // console.log('Selected Date:', selectedDate);
+    let expense: ExpenseDTO = {
+      name: selectedOption,
+      amount: amount,
+      isFixed: false,
+      employeeId: employeeId,
+      dueDate: getCurrentDateTime(),
+
+    }
+    postExpense(expense, employeeId, token).then((response) => {
+      // console.log(location?.pathname.replace("/add-finance", ""));
+      router.push(location?.pathname.replace("/add-finance", ""))
+    });
     // You can perform other actions here, like sending the data to a server.
   };
 
@@ -67,9 +100,19 @@ const AddFinance = (props: Props) => {
   };
 
   const handleDialogSave = () => {
-    // Implement the logic to save the name here (e.g., send an API request)
-    // After saving, close the dialog
-    handleCloseDialog();
+    setIsLoading(true)
+    if (newName.trim() !== "" ) {
+      postExpenseName(newName, true, token).then(
+        () => {
+          setIsLoading(false)
+          handleCloseDialog();
+        }
+      ).catch(err => {
+        console.log(err);
+        setIsLoading(false)
+
+      })
+    }
   };
 
   return (
@@ -92,6 +135,7 @@ const AddFinance = (props: Props) => {
         <Select
           value={selectedOption}
           onChange={handleOptionChange}
+          onClick={handleOptionChangeClick}
           displayEmpty
           style={{ minWidth: 'min-content' }}
           placeholder="Select an option...."
@@ -100,9 +144,9 @@ const AddFinance = (props: Props) => {
             Select an option...
           </MenuItem>
           {
-          options.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
+          expenseNames.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
             </MenuItem>
           ))
           }
@@ -119,13 +163,13 @@ const AddFinance = (props: Props) => {
         </LocalizationProvider> */}
           <TextField
           label="Amount القيمة"
-          name="job"
+          name="amount"
           variant="outlined"
           margin="normal"
           fullWidth
           type='number'
-          // value={job}
-          // onChange={handleJobChange}
+          value={amount}
+          onChange={handleAmountChange}
           // sx={{width: "50%"}}
 
         />
@@ -144,6 +188,7 @@ const AddFinance = (props: Props) => {
               variant="outlined"
               margin="normal"
               fullWidth
+              placeholder='ادخل اسم المصروف مثل (مصروفات العلاج)'
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
             />
@@ -152,7 +197,7 @@ const AddFinance = (props: Props) => {
             <Button onClick={handleCloseDialog} color="primary">
               Cancel
             </Button>
-            <Button onClick={handleDialogSave} color="primary">
+            <Button onClick={handleDialogSave} color="primary" disabled={isLoading}>
               Save
             </Button>
           </DialogActions>
@@ -173,7 +218,7 @@ const AddFinance = (props: Props) => {
           variant="contained"
           color="error" // Error color
         //   onClick={handleCancel}
-          href="/nkry-ca/manage-employee/gas-agsasd-zxcasdeq-atq123fdv12-asfd/"
+          href={"/nkry-ca/manage-employee/" + employeeId}
           style={{margin: '10px'}}
         >
           Cancel

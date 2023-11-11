@@ -1,3 +1,5 @@
+import { ExpenseDTO } from "./Expense"
+
 export interface EmployeeDTO {
     id?: string,
     firstName: string,
@@ -9,7 +11,7 @@ export interface EmployeeDTO {
     passportNumber: string,
     nationality: string,
     job: string,
-    monthlyFinance: Object[],
+    monthlyFinance?: Object[],
     car?: {
         company: string, 
         model: string,
@@ -17,7 +19,10 @@ export interface EmployeeDTO {
         plateNumber: string
     } | null,
     personalDetails?: any,
-    fixedFinance: any,
-    fixedExpnenses: any,
+    fixedFinance?: {
+        baseSalary: number,
+        deliveryRate: number        
+    },
+    fixedExpnenses?: ExpenseDTO[],
     
 }

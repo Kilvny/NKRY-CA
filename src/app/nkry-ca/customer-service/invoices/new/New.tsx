@@ -14,7 +14,7 @@ import styles from './invoicesNew.module.scss'; // Import the SCSS module
 import { HexColorPicker } from "react-colorful";
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import { InvoiceDTO } from '@/DTO\'s/Invoice';
+import { InvoiceDTO } from '@/DTOs/Invoice';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useSession } from 'next-auth/react';

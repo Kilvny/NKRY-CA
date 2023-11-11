@@ -1,4 +1,4 @@
-import { EmployeeDTO } from '@/DTO\'s/Employee';
+import { EmployeeDTO } from '@/DTOs/Employee';
 
 const apiUrl = 'https://localhost:7112/api'
 
