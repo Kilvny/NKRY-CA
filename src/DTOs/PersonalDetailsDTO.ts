@@ -4,4 +4,5 @@ export interface PersonalDetailsDTO {
     flightTicketsDueDate?: Date;
     dateOfBirth?: Date ;
     duesPayDate?: Date ;
+    [key: string]: Date | string | undefined; // Add an index signature
 }

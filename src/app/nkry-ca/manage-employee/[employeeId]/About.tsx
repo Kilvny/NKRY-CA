@@ -41,6 +41,7 @@ import { ExpenseDTO } from '@/DTOs/Expense';
 import { esES } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ar';
+import { PersonalDetailsDTO } from '@/DTOs/PersonalDetailsDTO';
 
 
 
@@ -74,7 +75,11 @@ export default function About() {
   const [clickFlag, setClickFlag] = useState(false)
   const [newDeliveries, setnewDeliveries] = useState(0)
   const [expensesData, setExpensesData] = useState<ExpenseDTO[] | any>([])
-  
+  const [visaExpDate, setVisaExpDate] = useState("")
+  const [flightTicketsDueDate, setFlightTicketsDueDate] = useState("")
+  const [duePaymentsDueDate, setDuePaymentsDueDate] = useState("")
+
+
   const router = useRouter();
   const params = useParams();
   const employeeId: string = params?.employeeId ? params?.employeeId.toString() : ""
@@ -91,6 +96,10 @@ export default function About() {
         console.log(_currMonthFinance);
         setExpensesData(_currMonthFinance?.monthlyExpenses?.sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()))
         setEmployee(employeeData);
+        setVisaExpDate(employeeData.personalDetails.visaExpiryDate.toString())
+        setFlightTicketsDueDate(employeeData.personalDetails.flightTicketsDueDate.toString())
+        setDuePaymentsDueDate(employeeData.personalDetails.duesPayDate.toString())
+        
       } catch (error) {
         console.error('Error fetching employee:', error);
       }
@@ -98,13 +107,13 @@ export default function About() {
 
     fetchEmployee();
   }, [token, employeeId, isLoading]);
-  console.log(employee);
-  const employeeData = { // mock data
+
+  const employeeData = { // mock data // personal details data
     "الإسم": (employee?.firstName + " " + employee?.lastName),
     "رقم الهاتف": employee?.phoneNumber,
-    "المدة المتبقية في الإقامة": getRemainingMonthsAndDays('2024-12-31'),
-    "موعد صرف مستحقات الأجازة": getRemainingMonthsAndDays('2026-01-01'),
-    "استحاق تذاكر السفر": getRemainingMonthsAndDays('2024-06-01')
+    "المدة المتبقية في الإقامة": getRemainingMonthsAndDays(visaExpDate),
+    "موعد صرف مستحقات الأجازة": getRemainingMonthsAndDays(duePaymentsDueDate),
+    "استحاق تذاكر السفر": getRemainingMonthsAndDays(flightTicketsDueDate)
   }
 
 
@@ -558,6 +567,9 @@ const getTimeDifference = (targetDate: Date, currentDate: Date): number => {
 }
 
 const getRemainingMonthsAndDays = (targetDate: string) => {
+  if (targetDate.trim() === '') {
+    return "Not set - لم يتم التحديد"
+  }
   const _targetDate = new Date(targetDate)
   const currentDate = new Date()
 

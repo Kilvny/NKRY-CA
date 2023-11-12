@@ -11,6 +11,9 @@ import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import { PersonalDetailsDTO } from '@/DTOs/PersonalDetailsDTO';
+import { putPersonalDetails } from '@/services/employee.services';
+import Token from '../../../../../../token.json'
 
 type Props = {};
 
@@ -30,25 +33,53 @@ const options = [
 ];
 
 const AddDetails = (props: Props) => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string>("");
   const [value, setValue] = useState<Date | null>(new Date());
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const router = useRouter();
   const params = useParams();
   const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
+  const token: string = Token?.token;
 
   const handleOptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
   };
 
 
-
   const handleSave = () => {
-    // Mock saving data by logging it
+
     console.log('Selected Option:', selectedOption);
     console.log('Selected Date:', value);
-    // You can perform other actions here, like sending the data to a server.
+    setIsLoading(true)
+
+    const formattedDate = dayjs(value).format('YYYY-MM-DDTHH:mm:ss.SSS');
+    // console.log(formattedDate);
+    if(selectedOption === "" || value?.toString().trim() == null) {
+      alert("please enter correct values")
+      setIsLoading(false)
+      return
+    }
+
+    let pd: PersonalDetailsDTO = {
+      employeeId: employeeId,
+    }
+    pd[selectedOption] = formattedDate
+
+    // console.log("pd:", pd);
+    putPersonalDetails(pd, employeeId, token).then((response) => {
+      setIsLoading(false)
+      console.log(response, "adddetails.tsx")
+      if(response.ok) {
+        router.push(location?.pathname.replace("/add-details", ""))
+      }
+    }).catch(err => {
+      alert(err)
+      setIsLoading(false)
+    });
+
   };
+
 
   const handleCancel = () => {
     // Perform the cancel action, such as returning to the previous page.
