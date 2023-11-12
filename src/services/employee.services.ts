@@ -88,3 +88,35 @@ export const postEmployee = async (data :EmployeeDTO, token: string ) : Promise<
         console.log(`Error while posting Invoice ${error}`);
     }
 }
+
+export const deleteEmployee = async (employeeId: string, token: string ) : Promise<any> => {
+
+
+  try {
+      // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+      const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        };
+        const requestOptions = {
+          method: 'DELETE',
+          headers: headers,
+        };
+        
+        fetch(`${apiUrl}/employees/${employeeId}`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response?.json(); // Parse the response JSON
+          })
+          .then(data => {
+            console.log(data); // Process the response data here
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+  } catch (error) {
+      console.log(`Error while posting Invoice ${error}`);
+  }
+}

@@ -67,6 +67,7 @@ const AddFinance = (props: Props) => {
   };
 
   const handleSave = () => {
+    setIsLoading(true)
     // Mock saving data by logging it
     console.log('Selected Option:', selectedOption, "Amount:", amount);
     // console.log('Selected Date:', selectedDate);
@@ -79,8 +80,12 @@ const AddFinance = (props: Props) => {
 
     }
     postExpense(expense, employeeId, token).then((response) => {
+      setIsLoading(false)
       // console.log(location?.pathname.replace("/add-finance", ""));
       router.push(location?.pathname.replace("/add-finance", ""))
+    }).catch(err => {
+      alert(err)
+      setIsLoading(false)
     });
     // You can perform other actions here, like sending the data to a server.
   };
@@ -211,6 +216,7 @@ const AddFinance = (props: Props) => {
           color="primary" // Success color
           onClick={handleSave}
           style={{margin: '10px'}}
+          disabled={isLoading}
         >
           Save
         </Button>

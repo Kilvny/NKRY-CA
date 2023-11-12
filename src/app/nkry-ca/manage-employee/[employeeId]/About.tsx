@@ -18,14 +18,31 @@ import {
   MenuItemProps,
 } from '@mui/material';
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import WarningIcon from '@mui/icons-material/Warning';
+import { IconButton, TextField } from '@mui/material';
+
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import MenuItem from '@/components/MenuItem';
 import { MenuItemOptions } from '@/components/MenuItem/MenuItem';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import TOKEN from "../../../../../token.json"
-import { getEmployee } from '@/services/employee.services';
+import { deleteEmployee, getEmployee } from '@/services/employee.services';
 import { EmployeeDTO } from '@/DTOs/Employee';
+import { getCurrentMonthFinance, updateDeliveriesOfEmployee } from '@/services/employeeFinance.services';
+import { MonthlyFinanceDTO } from '@/DTOs/MonthlyFinance';
+import { DeliveriesUpdateDTO } from '@/DTOs/DeliveriesUpdateDTO';
+import { ExpenseDTO } from '@/DTOs/Expense';
+import { esES } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ar';
+
+
 
 
 const menuItemOptions: MenuItemOptions = {
@@ -33,70 +50,162 @@ const menuItemOptions: MenuItemOptions = {
     text: 'إضافة تاريخ إنتهاء الإقامة',
     url: 'Iqama'
   },
-   option2: {
+  option2: {
     text: 'إضافة تاريخ إستحقاق تذاكر الطيران',
     url: 'flight'
   },
-   option3: {
+  option3: {
     text: 'إضافة موعد صرف المستحقات',
     url: 'dues'
   },
-   option4: {
+  option4: {
     text: 'إضافة تفاصيل مالية',
     url: 'finance'
   }
-  
+
 }
 
 export default function About() {
   const [employee, setEmployee] = useState<EmployeeDTO>()
-
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState<boolean>(false);
+  const [currMonthFinance, setCurrMonthFinance] = useState<MonthlyFinanceDTO>()
+  const [openEditDeliveriesDialog, setOpenEditDeliveriesDialog] = useState<boolean>(false);
+  const [clickFlag, setClickFlag] = useState(false)
+  const [newDeliveries, setnewDeliveries] = useState(0)
+  const [expensesData, setExpensesData] = useState<ExpenseDTO[] | any>([])
+  
   const router = useRouter();
   const params = useParams();
-  const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
+  const employeeId: string = params?.employeeId ? params?.employeeId.toString() : ""
 
-
+  
 
   const token = TOKEN.token
   useEffect(() => {
     async function fetchEmployee() {
       try {
-        const employeeData = await getEmployee(employeeId ,token);
+        const employeeData = await getEmployee(employeeId, token);
+        const _currMonthFinance: MonthlyFinanceDTO = await getCurrentMonthFinance(employeeId, token);
+        setCurrMonthFinance(_currMonthFinance)
+        console.log(_currMonthFinance);
+        setExpensesData(_currMonthFinance?.monthlyExpenses?.sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()))
         setEmployee(employeeData);
-        console.log(employeeId);
       } catch (error) {
         console.error('Error fetching employee:', error);
       }
     }
-    
+
     fetchEmployee();
-  }, [token, employeeId]);
+  }, [token, employeeId, isLoading]);
   console.log(employee);
-    const employeeData = { // mock data
-        "الإسم": (employee?.firstName + " " + employee?.lastName),
-        "رقم الهاتف": employee?.phoneNumber,
-        "المدة المتبقية في الإقامة": getRemainingMonthsAndDays('2024-12-31'),
-        "موعد صرف مستحقات الأجازة": getRemainingMonthsAndDays('2026-01-01'),
-        "استحاق تذاكر السفر": getRemainingMonthsAndDays('2024-06-01')
-    }
+  const employeeData = { // mock data
+    "الإسم": (employee?.firstName + " " + employee?.lastName),
+    "رقم الهاتف": employee?.phoneNumber,
+    "المدة المتبقية في الإقامة": getRemainingMonthsAndDays('2024-12-31'),
+    "موعد صرف مستحقات الأجازة": getRemainingMonthsAndDays('2026-01-01'),
+    "استحاق تذاكر السفر": getRemainingMonthsAndDays('2024-06-01')
+  }
 
-    const expensesData = [
-      { expense: "تجديد اقامة", date: "2015-12-06", amount: "1500 SAR" },
-      { expense: "تجديد تأمين", date: "2018-12-06", amount: "3550 SAR" },
-    ];
-    
-    menuItemOptions.option1.url = `/add-details`
-    menuItemOptions.option2.url = `/add-details`
-    menuItemOptions.option3.url = `/add-details`
 
-    const handleAddExpense = (e: any) => {
-      e.preventDefault()
-      router.push(`/nkry-ca/manage-employee/${employeeId}/add-finance`)
+
+  menuItemOptions.option1.url = `/add-details`
+  menuItemOptions.option2.url = `/add-details`
+  menuItemOptions.option3.url = `/add-details`
+
+
+  const totalMonthlyExpenses = expensesData
+    ? expensesData
+        .filter((e: ExpenseDTO) => e.isFixed == false) 
+        .reduce((total: number, e: ExpenseDTO) => total + e.amount, 0)
+    : 0;
+
+  const totalFixedExpenses = calculateTotalFixed();
+
+  function calculateTotalFixed(): number {
+    return employee?.fixedExpnenses
+    ? employee?.fixedExpnenses
+        .filter((e: ExpenseDTO) => e.isFixed == true) 
+        .reduce((total: number, e: ExpenseDTO) => total + e.amount, 0)
+    : 0;
+  }
+
+  const handleAddExpense = (e: any) => {
+    e.preventDefault()
+    router.push(`/nkry-ca/manage-employee/${employeeId}/add-finance`)
+  }
+  const handleAddExpenseFixed = (e: any) => {
+    e.preventDefault()
+    router.push(`/nkry-ca/manage-employee/${employeeId}/add-finance-fixed`)
+  }
+
+  const handleOpenConfirmationDialog = () => {
+    setOpenConfirmationDialog(true);
+  };
+
+  const handleCloseConfirmationDialog = () => {
+    setOpenConfirmationDialog(false);
+  };
+
+  const handleDelete = (e: any) => {
+    e.preventDefault();
+    handleOpenConfirmationDialog();
+  };
+
+  const handleConfirmDelete = () => {
+    setIsLoading(true);
+    deleteEmployee(employeeId, token)
+      .then((result) => {
+        setIsLoading(false);
+        router.push(`/nkry-ca/manage-employee`);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        alert(err);
+      })
+      .finally(() => {
+        handleCloseConfirmationDialog();
+      });
+    };
+
+  const handleOpenEditDeliveriesDialog = () => {
+    setOpenEditDeliveriesDialog(true);
+  };
+
+  const handleCloseEditDeliveriesDialog = () => {
+    setOpenEditDeliveriesDialog(false);
+  };
+
+  const handleEditDeliveriesDialogSave = () => {
+    if (newDeliveries == 0 || newDeliveries == undefined) {
+      return;
+    } 
+    setIsLoading(true)
+
+    let _newDeliveries = newDeliveries + (currMonthFinance?.deliveriesMade ?? 0);
+    let currentDate = new Date();
+    let currentMonth = currentDate.getMonth() + 1; // Note: Months are zero-indexed, so we add 1
+    let currentYear = currentDate.getFullYear();
+
+    let data: DeliveriesUpdateDTO = {
+      deliveriesMade: _newDeliveries,
+      dueMonth: currentMonth, 
+      dueYear: currentYear,
+      employeeId: employeeId,
     }
-    const handleAddExpenseFixed = (e: any) => {
-      e.preventDefault()
-      router.push(`/nkry-ca/manage-employee/${employeeId}/add-finance-fixed`)
-    }
+      updateDeliveriesOfEmployee(data, employeeId, token).then(
+        () => {
+          setIsLoading(false)
+          handleCloseEditDeliveriesDialog();
+        }
+      ).catch(err => {
+        console.log(err);
+        setIsLoading(false)
+
+      })
+  };
+
+
   return (
     <>
       <Box
@@ -146,7 +255,7 @@ export default function About() {
                     color="textSecondary"
                     sx={{ mb: 1 }}
                   >
-                    {employee?.firstName + " " + employee?.lastName } - {employee?.job}
+                    {employee?.firstName + " " + employee?.lastName} - {employee?.job}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -165,12 +274,45 @@ export default function About() {
                   <Box
                     sx={{ display: "flex", justifyContent: "center", mb: 2 }}
                   >
+
                     <Button variant="outlined" color="warning">
                       EDIT
                     </Button>
-                    <Button variant="contained" color="error" sx={{ ml: 1, mr: 1 }}>
+                    <Button
+                      onClick={handleDelete}
+                      disabled={isLoading}
+                      variant="contained"
+                      color="error"
+                      sx={{ ml: 1, mr: 1 }}>
                       DELETE
                     </Button>
+                    <Dialog
+                      open={openConfirmationDialog}
+                      onClose={handleCloseConfirmationDialog}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                    >
+                      <Box display="flex" alignContent="center" alignItems="center">
+                        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}
+                        </DialogTitle>
+                        <WarningIcon sx={{ color: '#FFA500', mr: 1, ml: "-10px", }} />
+                      </Box>
+
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                          Are you sure you want to delete this employee?
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button disabled={isLoading} onClick={handleCloseConfirmationDialog} color="primary">
+                          Cancel
+                        </Button>
+                        <Button disabled={isLoading}  onClick={handleConfirmDelete} color="error" autoFocus>
+                          Confirm
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+
 
                     <MenuItem
                       option1={menuItemOptions.option1}
@@ -188,11 +330,12 @@ export default function About() {
                   <List sx={{ borderRadius: 3 }}>
                     <ListItem sx={{ justifyContent: "space-between", p: 3 }}>
                       {/* <FacebookIcon color="warning" /> */}
-                      <ListItemText primary="Base Salary - الراتب الأساسي" /> 3800 SAR
+                      <ListItemText primary="Base Salary - الراتب الأساسي" /> SAR {employee?.fixedFinance?.baseSalary} 
                     </ListItem>
                     <ListItem sx={{ justifyContent: "space-between", p: 3 }}>
                       {/* <GitHubIcon sx={{ color: "#333333" }} /> */}
-                      <ListItemText primary="Delivery Rate" /> ا25 ريال للطلب  
+                      <ListItemText primary="Delivery Rate"/>
+                       SAR {employee?.fixedFinance?.deliveryRate} 
                     </ListItem>
                     <ListItem sx={{ justifyContent: "space-between", p: 3 }}>
                       {/* <TwitterIcon sx={{ color: "#55acee" }} /> */}
@@ -234,8 +377,8 @@ export default function About() {
                   {/* Other profile details */}
                 </CardContent>
               </Card>
-              
-                  {/* Car Details */}
+
+              {/* Car Details */}
               <Grid container spacing={2} sx={{ mt: 2 }}>
                 <Grid item xs={12} md={6}>
                   <Card className="mb-4">
@@ -246,7 +389,7 @@ export default function About() {
                       {/* Project status details */}
                       <Box>
                         <Typography variant="body2" color="textSecondary">
-                          {employee?.car?.company +" - " + employee?.car?.model + " - " + employee?.car?.manfactureYear}
+                          {employee?.car?.company + " - " + employee?.car?.model + " - " + employee?.car?.manfactureYear}
                         </Typography>
                         <p>{employee?.car?.plateNumber ?? " "}</p>
                       </Box>
@@ -254,32 +397,73 @@ export default function About() {
                   </Card>
 
                   {/* monthly target section */}
-                  <Card sx={{marginTop: "10px"}} className="mb-4">
+                  <Card sx={{ marginTop: "10px", position: "relative" }} className="mb-4">
                     <CardContent>
                       <Typography variant="body2" color="textSecondary">
-                        Monthly Target
+                        Monthly Target - بيانات الشهر الحالي
                       </Typography>
+                      <br></br>
                       {/* Project status details */}
                       <Box>
                         <Typography variant="body2" color="textSecondary">
-                          Deliveries count : 15
+                          Deliveries count: {currMonthFinance?.deliveriesMade}
                         </Typography>
-                        <p>Total 2406 SAR</p>
+                        <p>Total Salary: {currMonthFinance?.totalSalary} SAR</p>
                       </Box>
                     </CardContent>
+                    
+                    {/* Edit button */}
+                    <Button
+                      variant="contained"
+                      color="info"
+                      size="small"
+                      style={{ position: "absolute", top: "10px", right: "10px" }}
+                      onClick={handleOpenEditDeliveriesDialog}
+                      disabled={isLoading}
+                    >
+                      Edit
+                    </Button>
                   </Card>
+                    <Dialog open={openEditDeliveriesDialog} onClose={handleCloseEditDeliveriesDialog}>
+                    <DialogTitle>Edit - إضافة توصيلات جديدة</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText>
+                        Enter the amount of new deliveries, the current is {currMonthFinance?.deliveriesMade}
+                      </DialogContentText>
+                      <TextField
+                        label="Deliveries"
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        placeholder="ادخل عدد التوصيلات الجديدة فقط"
+                        value={newDeliveries ?? 0}
+                        type='number'
+                        onChange={(e) => setnewDeliveries(parseInt(e.target.value))}
+                      />
+                      <p> {( (currMonthFinance?.deliveriesMade ?? 0) + newDeliveries )} :  المجموع بعد الإضافة  </p>
+                      <p> {( (currMonthFinance?.deliveriesMade ?? 0) )} :  الحالي  </p>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleCloseEditDeliveriesDialog} color="warning">
+                        Cancel
+                      </Button>
+                      <Button onClick={handleEditDeliveriesDialogSave} color="primary" disabled={isLoading}>
+                        Save
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </Grid>
 
-                  {/* Expenses */}
+                {/* Expenses */}
 
-                  
-              {/* <Grid container spacing={2} sx={{ mt: 2 }}> */}
+
+                {/* <Grid container spacing={2} sx={{ mt: 2 }}> */}
                 <Grid item xs={12} md={6}>
                   <Card className="mb-4">
                     <CardContent>
 
                       {/* monthly expenses */}
-                    <Box sx={{display: 'flex', justifyContent: "space-between", alignItems: "center", alignContent: 'center', p: 1}}>
+                      <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", alignContent: 'center', p: 1 }}>
                         <Typography variant="body2" color="textSecondary">
                           Expenses - المصروفات الشهرية
                         </Typography>
@@ -291,32 +475,32 @@ export default function About() {
                           variant="contained"
                           // disableElevation
                           onClick={handleAddExpense}
-                          // endIcon={<KeyboardArrowDownIcon />}
+                        // endIcon={<KeyboardArrowDownIcon />}
                         >
-                           إضافة مصروفات شهرية
+                          إضافة مصروفات شهرية
                         </Button>
-                    </Box>
-                      <ul>
-                      {
-                        // todo: sort by date the sooner the first
-                        expensesData.map( (e, i)=> {
+                      </Box>
+                      <ul style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {
+                          // todo: sort by date the sooner the first
+                          expensesData?.map((e: ExpenseDTO, i: any) => {
 
-                          return (
-                                <li key={i}>
-                            <Box key={i}>
-                            <Typography variant="body2" color="textSecondary">
-                                Expense: {e.expense + ' '} Date: {e.date} Amount: {e.amount}
-                            </Typography>
-                            {/* <p>KSF 2406</p> */}
-                          </Box>
-                                </li>
-                          )
-                        })
-                      }
-                        </ul>
+                            return (
+                              <li key={i}>
+                                <Box key={i}>
+                                  <Typography variant="body2" color="textSecondary">
+                                    Expense: {e.name + ' '} Date: {dayjs(e?.dueDate).format('YYYY-MM-DD')} Amount: {e.amount}
+                                  </Typography>
+                                  {/* <p>KSF 2406</p> */}
+                                </Box>
+                              </li>
+                            )
+                          })
+                        }
+                      </ul>
 
-                        {/* fixed finance */}
-                        <Box sx={{display: 'flex', justifyContent: "space-between", alignItems: "center", alignContent: 'center', p: 1}}>
+                      {/* fixed finance */}
+                      <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", alignContent: 'center', p: 1 }}>
                         <Typography variant="body2" color="textSecondary">
                           Expenses - المصروفات
                         </Typography>
@@ -328,36 +512,37 @@ export default function About() {
                           variant="contained"
                           // disableElevation
                           onClick={handleAddExpenseFixed}
-                          // endIcon={<KeyboardArrowDownIcon />}
+                        // endIcon={<KeyboardArrowDownIcon />}
                         >
                           إضافة مصروفات
                         </Button>
-                    </Box>
-                      <ul>
-                      {
-                        // todo: sort by date the sooner the first
-                        expensesData.map( (e, i)=> {
+                      </Box>
+                      <ul style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {
+                          // todo: sort by date the sooner the first
+                          employee?.fixedExpnenses?.map((e: ExpenseDTO, i: any) => {
 
-                          return (
-                                <li key={i}>
-                            <Box key={i}>
-                            <Typography variant="body2" color="textSecondary">
-                                Expense: {e.expense + ' '} Date: {e.date} Amount: {e.amount}
-                            </Typography>
-                            {/* <p>KSF 2406</p> */}
-                          </Box>
-                                </li>
-                          )
-                        })
-                      }
-                        </ul>
+                            return (
+                              <li key={i}>
+                                <Box key={i}>
+                                  <Typography variant="body2" color="textSecondary">
+                                    Expense: {e.name + ' '} Due Date: {dayjs(e.dueDate).format('YYYY-MM-DD')} Amount: {e.amount}
+                                  </Typography>
+                                  {/* <p>KSF 2406</p> */}
+                                </Box>
+                              </li>
+                            )
+                          })
+                        }
+                      </ul>
 
-                        <Typography>Total Expenses: 5050.00 ريال</Typography>
+                      <Typography>Total Monthly Expenses: {totalMonthlyExpenses} &#65020;	</Typography>
+                      <Typography>Total Fixed Expenses: {totalFixedExpenses} &#65020;	</Typography>
                     </CardContent>
                   </Card>
                 </Grid>
 
-                
+
               </Grid>
             </Grid>
           </Grid>
@@ -368,21 +553,21 @@ export default function About() {
 }
 
 
-const getTimeDifference = (targetDate: Date, currentDate: Date) : number => {
-    return (targetDate.getTime() - currentDate.getTime())
-} 
+const getTimeDifference = (targetDate: Date, currentDate: Date): number => {
+  return (targetDate.getTime() - currentDate.getTime())
+}
 
 const getRemainingMonthsAndDays = (targetDate: string) => {
-    const _targetDate = new Date(targetDate)
-    const currentDate = new Date()
-    
-    const timeDifferenceInMs = getTimeDifference(_targetDate, currentDate)
-    
-    const remainingDays = Math.ceil(timeDifferenceInMs / (1000 * 60 * 60 * 24))
+  const _targetDate = new Date(targetDate)
+  const currentDate = new Date()
 
-    const remainingYears = Math.floor(remainingDays / 365);
-    const remainingMonths = Math.floor((remainingDays % 365) / 30);
-    const remainingDaysInMonth = remainingDays - (remainingYears * 365) - (remainingMonths * 30);
-    
-    return `${remainingYears} Years, and ${remainingMonths} Months and ${remainingDaysInMonth} Days.`
+  const timeDifferenceInMs = getTimeDifference(_targetDate, currentDate)
+
+  const remainingDays = Math.ceil(timeDifferenceInMs / (1000 * 60 * 60 * 24))
+
+  const remainingYears = Math.floor(remainingDays / 365);
+  const remainingMonths = Math.floor((remainingDays % 365) / 30);
+  const remainingDaysInMonth = remainingDays - (remainingYears * 365) - (remainingMonths * 30);
+
+  return `${remainingYears} Years, and ${remainingMonths} Months and ${remainingDaysInMonth} Days.`
 }

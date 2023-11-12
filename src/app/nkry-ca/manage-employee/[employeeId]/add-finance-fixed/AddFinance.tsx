@@ -10,52 +10,87 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Button, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useParams } from 'next/navigation';
+import { ExpenseDTO } from '@/DTOs/Expense';
+import { postExpenseFixed } from '@/services/expense.service';
+import Token from '../../../../../../token.json'
+import { useRouter } from 'next/navigation';
 
 type Props = {};
 // here we should get the expenses with filter ?names=true in the api call 
 const options = [
   {
     value: 'visaExpiryDate',
-    label: 'إضافة تكاليف تجديد الإقامة',
+    label: 'تكاليف تجديد الإقامة',
   },
   {
     value: 'flightTicketsDueDate',
-    label: 'إضافة تكاليف رخص العمل',
+    label: 'تكاليف رخص العمل',
   },
   {
     value: 'duesPayDate',
-    label: 'إضافة مصروفات التأمينات الاجتماعية',
+    label: 'مصروفات التأمينات الاجتماعية',
   },
 ];
 
 const AddFinance = (props: Props) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [value, setValue] = useState<Date | null>(new Date());
+  const [amount, setAmount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const router = useRouter();
   const params = useParams();
   const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
+
+  const token: string = Token?.token;
 
   const handleOptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
   };
 
-  const handleDateChange = (date: Date | null) => {
-    if (date) {
-      setSelectedDate(date);
-    }
-  };
+
 
   const handleSave = () => {
-    // Mock saving data by logging it
-    console.log('Selected Option:', selectedOption);
-    console.log('Selected Date:', selectedDate);
-    // You can perform other actions here, like sending the data to a server.
+
+    setIsLoading(true)
+
+    const formattedDate = dayjs(value).format('YYYY-MM-DDTHH:mm:ss.SSS');
+    console.log(formattedDate);
+    if(selectedOption == undefined || value?.toString().trim() == null || amount == 0 ) {
+      alert("please enter correct values")
+      setIsLoading(false)
+      return
+    }
+
+    let expense: ExpenseDTO = {
+      name: selectedOption,
+      amount: amount,
+      isFixed: true,
+      employeeId: employeeId,
+      dueDate: formattedDate
+
+    }
+
+    // console.log("Expense:", expense);
+    postExpenseFixed(expense, employeeId, token).then((response) => {
+      setIsLoading(false)
+      router.push(location?.pathname.replace("/add-finance-fixed", ""))
+    }).catch(err => {
+      alert(err)
+      setIsLoading(false)
+    });
+
   };
+
+
 
   const handleCancel = () => {
     // Perform the cancel action, such as returning to the previous page.
     // You can use React Router or other navigation mechanisms for this.
+  };
+
+  const handleAmountChange = (event: any) => {
+    setAmount(parseFloat(event.target.value));
   };
 
   return (
@@ -77,8 +112,8 @@ const AddFinance = (props: Props) => {
           </MenuItem>
           {
           options.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
+            <MenuItem key={option.value} value={option.label}>
+              {"إضافة "+ option.label}
             </MenuItem>
           ))
           }
@@ -95,13 +130,13 @@ const AddFinance = (props: Props) => {
         </LocalizationProvider>
           <TextField
           label="Amount القيمة"
-          name="job"
+          name="amoubt"
           variant="outlined"
           margin="normal"
           fullWidth
           type='number'
-          // value={job}
-          // onChange={handleJobChange}
+          value={amount}
+          onChange={handleAmountChange}
           // sx={{width: "50%"}}
 
         />
@@ -114,6 +149,7 @@ const AddFinance = (props: Props) => {
           color="primary" // Success color
           onClick={handleSave}
           style={{margin: '10px'}}
+          disabled={isLoading}
         >
           Save
         </Button>
@@ -123,6 +159,7 @@ const AddFinance = (props: Props) => {
         //   onClick={handleCancel}
           href={"/nkry-ca/manage-employee/" + employeeId}
           style={{margin: '10px'}}
+          disabled={isLoading}
         >
           Cancel
         </Button>

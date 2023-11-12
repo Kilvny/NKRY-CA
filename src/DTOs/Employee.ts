@@ -1,4 +1,5 @@
 import { ExpenseDTO } from "./Expense"
+import { PersonalDetailsDTO } from "./PersonalDetailsDTO"
 
 export interface EmployeeDTO {
     id?: string,
@@ -18,7 +19,7 @@ export interface EmployeeDTO {
         manfactureYear: number,
         plateNumber: string
     } | null,
-    personalDetails?: any,
+    personalDetails?: PersonalDetailsDTO,
     fixedFinance?: {
         baseSalary: number,
         deliveryRate: number        

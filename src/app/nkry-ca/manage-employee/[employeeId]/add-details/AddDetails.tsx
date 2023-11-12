@@ -9,6 +9,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 type Props = {};
 
@@ -29,23 +31,22 @@ const options = [
 
 const AddDetails = (props: Props) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [value, setValue] = useState<Date | null>(new Date());
+
+  const router = useRouter();
+  const params = useParams();
+  const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
 
   const handleOptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
   };
 
-  const handleDateChange = (date: Date | null) => {
-    if (date) {
-      setSelectedDate(date);
-    }
-  };
+
 
   const handleSave = () => {
     // Mock saving data by logging it
     console.log('Selected Option:', selectedOption);
-    console.log('Selected Date:', selectedDate);
+    console.log('Selected Date:', value);
     // You can perform other actions here, like sending the data to a server.
   };
 
@@ -103,7 +104,7 @@ const AddDetails = (props: Props) => {
           variant="contained"
           color="error" // Error color
         //   onClick={handleCancel}
-          href="/nkry-ca/manage-employee/gas-agsasd-zxcasdeq-atq123fdv12-asfd/"
+          href={"/nkry-ca/manage-employee/" + employeeId}
           style={{margin: '10px'}}
         >
           Cancel

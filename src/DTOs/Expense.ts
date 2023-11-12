@@ -5,5 +5,5 @@ export interface ExpenseDTO {
     dueDate?: string,
     isFixed: boolean,
     employeeFinanceId?: string,
-    employeeId: string
+    employeeId?: string
 }

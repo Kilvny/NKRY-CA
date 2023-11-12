@@ -18,6 +18,7 @@ import { EmployeeDTO } from '@/DTOs/Employee';
 import { postEmployee } from '@/services/employee.services';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import { Card, CardContent } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -59,6 +60,9 @@ const New = () => {
     const [deliveryRate, setDeliveryRate] = useState<number>(0)
 
     const [token, setToken] = useState<string | null>("");
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    const router = useRouter()
 
     useEffect(() => {
       const userToken = TOKEN
@@ -157,10 +161,16 @@ const New = () => {
         data.car = null;
       }
 
-      const postedEmployee = postEmployee(data, token);
+      setIsLoading(true);
+      postEmployee(data, token).then(() => {
+        setIsLoading(false);
+        router.push(location?.pathname.replace("/new", ""))
+      }).catch(err => {
+        setIsLoading(false);
+        alert(err)
+      })
 
       // Handle the response as needed (e.g., show a success message)
-      console.log('Response:', postedEmployee);
 
       // Clear the form if needed
       // setFirstName("")
@@ -209,21 +219,6 @@ const New = () => {
   const handlepassportNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassportNumber(e.target.value)
   };
-
-  // Event handler for Paid Amount field change
-  // const handlePaidAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   const paidAmount = e.target.value;
-  //   const remainingAmount = ''; // Get the remaining amount from the state or input field
-  //   setPaidAmount(parseFloat(paidAmount))
-  //   handlepassportNumberChange(paidAmount, remainingAmount);
-  // };
-
-  // Event handler for Remaining Amount field change
-  // const handleRemainingAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   const remainingAmount = e.target.value;
-  //   const paidAmount = ''; // Get the paid amount from the state or input field
-  //   handlepassportNumberChange(paidAmount, remainingAmount);
-  // };
 
 
   return (
@@ -344,6 +339,39 @@ const New = () => {
         onChange={handlepassportNumberChange}
       />
 
+      {/* fixed finance section */}
+      <Card sx={{ marginTop: "10px", display: "block" }} className="mb-4">
+        <CardContent>
+          {/* <Typography variant="body2" color="textSecondary">
+                        
+                      </Typography> */}
+          <Box>
+            <TextField
+              label="Base Salary - الراتب الأساسي"
+              name="manfactureYear"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              value={baseSalary}
+              onChange={handleBaseSalaryChange}
+              type='number'
+            // sx={{width: "50%"}}
+
+            />
+            <TextField
+              label="Delivery Rate - معدل التوصيل للطلب الواحد"
+              name="plateNumber"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              value={deliveryRate}
+              onChange={handleDeliveryRateChange}
+            // sx={{width: "50%"}}
+
+            />
+          </Box>
+        </CardContent>
+      </Card>
 
       {/* car details  */}
       {<Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%', marginTop: '10px'}}>
@@ -393,56 +421,32 @@ const New = () => {
 
       </Box> }
 
-      {/* fixed finance section */}
-      <Card sx={{ marginTop: "10px", display: "block" }} className="mb-4">
-        <CardContent>
-          {/* <Typography variant="body2" color="textSecondary">
-                        
-                      </Typography> */}
-          <Box>
-            <TextField
-              label="Base Salary - الراتب الأساسي"
-              name="manfactureYear"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={baseSalary}
-              onChange={handleBaseSalaryChange}
-              type='number'
-            // sx={{width: "50%"}}
-
-            />
-            <TextField
-              label="Delivery Rate - معدل التوصيل للطلب الواحد"
-              name="plateNumber"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              value={deliveryRate}
-              onChange={handleDeliveryRateChange}
-            // sx={{width: "50%"}}
-
-            />
-          </Box>
-        </CardContent>
-      </Card>
 
       {/* Save button */}
-      <Button  color="success" variant="contained" size="large" onClick={handleSave}>
+      <Box sx={{ display: "flex", flexDirection: "row"  }}>
+      <Button 
+      color="success" 
+      variant="contained" 
+      size="large" 
+      onClick={handleSave} 
+      disabled={isLoading}
+      style={{ margin: '10px'}}
+      >
         Save
       </Button>
 
       <Button
         variant="contained"
         color="error" // Error color
-        //   onClick={handleCancel}
+        // onClick={handleCancel}
         href="/nkry-ca/manage-employee"
         style={{ margin: '10px' }}
+        disabled={isLoading}
       >
         Cancel
       </Button>
-      {/* After that, the Tax invoice is generated and customer service is redirected to a screen where the Tax invoice is displayed. Also, the invoice appears on the invoices, and the craftsman can view it and add details such as the initial cost and stuff */}
-      {/* Invoice status once it's created is NEW then if the craftsman added the initial cost it will be updated to Preparation, after that, the CS agent can change the status to "Out for delivery" "Received" */}
+    </Box>
+
     </Box>
   );
 };
