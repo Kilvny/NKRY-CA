@@ -12,8 +12,8 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import React, { Suspense, useEffect } from 'react'
 import Loading from '@/components/common/loading'
 import Header from '@/components/Header/Header'
-import lightTheme from '@/pages/theme/lightTheme'
-import darkTheme from '@/pages/theme/darkTheme'
+import lightTheme from '@/lib/theme/lightTheme'
+import darkTheme from '@/lib/theme/darkTheme'
 import Cookies from 'js-cookie';
 import Footer from '@/components/Footer/Footer'
 
