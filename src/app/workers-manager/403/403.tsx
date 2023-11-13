@@ -37,7 +37,14 @@ const Custom403: NextPage = () => {
 
   return (
     <div style={containerStyle}>
-      <div style={flexContainerStyle}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {" "}
         <div style={{ margin: "1rem 0", textAlign: "center" }}>
           <h1 style={headingStyle}>403 - Unauthorized</h1>
           <p style={paragraphStyle}>Please login as admin</p>
