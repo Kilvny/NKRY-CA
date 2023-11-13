@@ -75,9 +75,9 @@ export default function About() {
   const [clickFlag, setClickFlag] = useState(false)
   const [newDeliveries, setnewDeliveries] = useState(0)
   const [expensesData, setExpensesData] = useState<ExpenseDTO[] | any>([])
-  const [visaExpDate, setVisaExpDate] = useState("")
-  const [flightTicketsDueDate, setFlightTicketsDueDate] = useState("")
-  const [duePaymentsDueDate, setDuePaymentsDueDate] = useState("")
+  const [visaExpDate, setVisaExpDate] = useState<string | undefined>("")
+  const [flightTicketsDueDate, setFlightTicketsDueDate] = useState<string | undefined>("")
+  const [duePaymentsDueDate, setDuePaymentsDueDate] = useState<string | undefined>("")
 
 
   const router = useRouter();
@@ -96,9 +96,9 @@ export default function About() {
         console.log(_currMonthFinance);
         setExpensesData(_currMonthFinance?.monthlyExpenses?.sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()))
         setEmployee(employeeData);
-        setVisaExpDate(employeeData.personalDetails.visaExpiryDate.toString())
-        setFlightTicketsDueDate(employeeData.personalDetails.flightTicketsDueDate.toString())
-        setDuePaymentsDueDate(employeeData.personalDetails.duesPayDate.toString())
+        setVisaExpDate(employeeData?.personalDetails?.visaExpiryDate?.toString())
+        setFlightTicketsDueDate(employeeData?.personalDetails?.flightTicketsDueDate?.toString())
+        setDuePaymentsDueDate(employeeData?.personalDetails?.duesPayDate?.toString())
         
       } catch (error) {
         console.error('Error fetching employee:', error);
@@ -566,11 +566,11 @@ const getTimeDifference = (targetDate: Date, currentDate: Date): number => {
   return (targetDate.getTime() - currentDate.getTime())
 }
 
-const getRemainingMonthsAndDays = (targetDate: string) => {
-  if (targetDate.trim() === '') {
+const getRemainingMonthsAndDays = (targetDate: string | undefined) => {
+  if (targetDate?.trim() === '') {
     return "Not set - لم يتم التحديد"
   }
-  const _targetDate = new Date(targetDate)
+  const _targetDate = new Date(targetDate ?? "")
   const currentDate = new Date()
 
   const timeDifferenceInMs = getTimeDifference(_targetDate, currentDate)

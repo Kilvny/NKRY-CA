@@ -20,6 +20,7 @@ import Cookies from 'js-cookie';
 import { useSession } from 'next-auth/react';
 import { postInvoice } from '@/services/invoices.service';
 import { token as TOKEN } from "../../../../../../token.json";
+import { Input } from '@mui/material';
 
 
 
@@ -53,7 +54,7 @@ const New = () => {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState(0);
     // State to keep track of payment status
-    const [paymentStatus, setPaymentStatus] = useState<number>(0);
+    const [paymentStatus, setPaymentStatus] = useState<string>('');
     const [paidAmount, setPaidAmount] = useState<number>(0);
     const [remainingAmount, setRemainingAmount] = useState<number>(0);
 
@@ -353,8 +354,8 @@ const New = () => {
           value={quantity}
           onChange={handleQuantityChange}
         />
-        <input
-          accept="image/*"
+        <Input
+          // accept="image/*"
           id="photo-attachment"
           type="file"
           style={{ display: 'none' }}

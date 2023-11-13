@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -22,7 +22,7 @@ type Props = {};
 
 
 const AddFinance = (props: Props) => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string | undefined>("");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [amount, setAmount] = useState<number>(0);
   const [openDialog, setOpenDialog] = useState(false);
@@ -53,7 +53,7 @@ const AddFinance = (props: Props) => {
   const handleOptionChangeClick = (event: any) => {
     setClickFlag(!clickFlag)
   }
-  const handleOptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleOptionChange = (event: SelectChangeEvent<string>, child: React.ReactNode) => {
     setSelectedOption(event.target.value as string);
   };
 

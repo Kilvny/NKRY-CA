@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, IconButton, ThemeProvider } from '@mui/material'
+import { Box, IconButton, PaletteMode, ThemeProvider } from '@mui/material'
 import { Theme, createTheme } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 // import './globals.css'
@@ -9,7 +9,7 @@ import { SessionProvider } from 'next-auth/react'
 import { Inter } from 'next/font/google'
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import Loading from '@/components/common/loading'
 import Header from '@/components/Header/Header'
 import lightTheme from '@/pages/theme/lightTheme'
@@ -36,20 +36,24 @@ export default function RootLayout({
 }) {
     // const storedTheme = Cookies.get<'light' | 'dark'>('theme') || 'dark'; // Get the stored theme from cookies, dark if not found
 
-    const getInitialThemeMode = () => {
-        // Get the theme mode from local storage or default to 'light' if not found.
-        let storedTheme: string | null = 'light';
-        try {
-            storedTheme = localStorage?.getItem('theme');
-        } catch (error) {
-            console.log(error);
-        }
-        return storedTheme;
-    };
 
-    const [mode, setMode] = React.useState(getInitialThemeMode());
 
-    // const [mode, setMode] = React.useState<'light' | 'dark'>('dark'); // default is storedTheme
+    const [mode, setMode] = React.useState<PaletteMode | undefined>("light");
+    useEffect(() => {
+        const getInitialThemeMode = () => {
+            // Get the theme mode from local storage or default to 'light' if not found.
+            let storedTheme: PaletteMode | undefined = 'light';
+            try {
+                storedTheme = (localStorage.getItem('theme') == 'light'? "light": 'dark') ?? "light";
+            } catch (error) {
+                console.log(error);
+            }
+            return storedTheme;
+        };
+                // Set the initial theme mode from local storage
+                setMode(getInitialThemeMode());
+            }, []); // The empty dependency array ensures this runs once on mount
+        
     const colorMode = React.useMemo(
         () => ({
             toggleColorMode: () => {

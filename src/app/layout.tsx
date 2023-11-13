@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, IconButton, ThemeProvider } from '@mui/material'
+import { Box, IconButton, PaletteMode, ThemeProvider } from '@mui/material'
 import { Theme, createTheme } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 // import './globals.css'
@@ -52,13 +52,13 @@ export default function RootLayout({
         return storedTheme;
     };
 
-    const [mode, setMode] = React.useState<string | null>("light");
+    const [mode, setMode] = React.useState<PaletteMode | undefined>("light");
     useEffect(() => {
         const getInitialThemeMode = () => {
             // Get the theme mode from local storage or default to 'light' if not found.
-            let storedTheme: string | null = 'light';
+            let storedTheme: PaletteMode | undefined = 'light';
             try {
-                storedTheme = localStorage?.getItem('theme');
+                storedTheme = (localStorage.getItem('theme') == 'light'? "light": 'dark') ?? "light";
             } catch (error) {
                 console.log(error);
             }

@@ -1,8 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -33,8 +33,8 @@ const options = [
 ];
 
 const AddFinance = (props: Props) => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [value, setValue] = useState<Date | null>(new Date());
+  const [selectedOption, setSelectedOption] = useState<string | undefined>("");
+  const [value, setValue] = useState<Date | null | Dayjs>(new Date());
   const [amount, setAmount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -44,8 +44,8 @@ const AddFinance = (props: Props) => {
 
   const token: string = Token?.token;
 
-  const handleOptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSelectedOption(event.target.value as string);
+  const handleOptionChange = (event: SelectChangeEvent<string>, child: React.ReactNode) => {
+    setSelectedOption(event.target.value);
   };
 
 

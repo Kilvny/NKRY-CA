@@ -17,7 +17,7 @@ import { token as TOKEN } from "../../../../../token.json";
 import { EmployeeDTO } from '@/DTOs/Employee';
 import { postEmployee } from '@/services/employee.services';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import { Card, CardContent } from '@mui/material';
+import { Card, CardContent, Input } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
 
@@ -303,8 +303,8 @@ const New = () => {
           value={address}
           onChange={handleaddressChange}
         />
-        <input
-          accept="image/*"
+        <Input
+          // accept="image/*"
           id="photo-attachment"
           type="file"
           style={{ display: 'none' }}
