@@ -23,7 +23,7 @@ let user: User = {
   export const login = async (username: string, password: string): Promise<User | null> => {
     try {
       // Disable SSL certificate validation (not recommended for production)
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+      // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       // Make a POST request to your authentication API
     //   TODO: Replace the url with apiUrl from enviroment variable
       const response = await fetch(`${apiUrl}/auth/login`, {

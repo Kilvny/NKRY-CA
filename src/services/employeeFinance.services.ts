@@ -65,14 +65,19 @@ export const getCurrentMonthFinance = async (employeeId: string, token: string):
   try {
     const headers = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`
     };
     const requestOptions = {
       method: 'GET',
       headers: headers,
+      host: 'nkry-ca.vercel.app', 
     };
-
+    console.log(headers, requestOptions)
     const response = await fetch(`${apiUrl}/employees/${employeeId}/Finance`, requestOptions)
+    if (response.status === 204) {
+      // No Content - handle accordingly
+      console.log("NO RESPONSEEEEEEEEEEEEEEEEE");
+    }
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
