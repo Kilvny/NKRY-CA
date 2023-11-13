@@ -13,7 +13,7 @@ const DataCard = ({title, value, description}: DataCardProps) => {
   return (
     <Paper className={scss.dataCard}>
       <div className={scss.header}>
-        <Typography variant='h7' color='lightslategray'>
+        <Typography variant='h6' color='lightslategray'>
           {title}
         </Typography>
         <Tooltip
