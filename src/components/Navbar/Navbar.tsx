@@ -274,7 +274,7 @@ export default function PrimarySearchAppBar({ theme, colorMode }: {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-                <Avatar alt={session?.user?.name} src={session?.user?.image} />
+                <Avatar alt={session?.user?.name ?? ""} src={session?.user?.image ?? ""} />
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
