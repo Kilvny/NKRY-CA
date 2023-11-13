@@ -35,7 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-// token 
-/token.json
-token.json
+# // token 
+# /token.json
+# token.json
 
