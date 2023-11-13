@@ -201,7 +201,7 @@ const TaxInvoice: React.FC<TaxInvoiceOptions> = (props) => {
           <Typography variant="h6" sx={{color: '#222222'}}>NKRY</Typography>
           <Typography variant="body1">الرياض - حي بدر <br/ > المملكة العربية السعودية</Typography>
           <Typography variant="h6" sx={{mt:1}}>رقم التسجيل الضريبي</Typography>
-          <Typography variant="h7" sx={{color: 'gray'}}>Tax Registration Number</Typography>
+          <Typography variant="h6" sx={{color: 'gray'}}>Tax Registration Number</Typography>
           <Typography variant="body1">310273137700003</Typography>
           <Typography variant="h5" sx={{mt:1}}>الرصيد المستحق</Typography>
           <Typography variant="body1" sx={{color: 'gray'}}>Total Due</Typography>

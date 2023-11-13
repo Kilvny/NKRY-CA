@@ -24,48 +24,17 @@ const Footer = () => {
   return (
     <footer className={scss.footer}>
       <Paper sx={{ width: "100%" }} color={"#262626"}>
-        <ul role="menu">
+          <ul role="menu">
           {
             routes.map((route, index) => {
               isOnNKRY_CA ? route = "/nkry-ca" + route : route = "/workers-manager" + route;
               if(index === 0) route = "/" // we want the home route without the section prefix
-              return (<li key={index}>
-                <FooterLink href={route}>{routesTranslations[index]}</FooterLink>
+              return (<li key={index} role="menuitem">
+                <FooterLink href={route} >{routesTranslations[index]}</FooterLink>
               </li>)
             })
           }
-          {/* <li>
-            <FooterLink href={"/"}>Home</FooterLink>
-          </li>
-          <li>
-            <FooterLink href={"/dashboard/data"}>Data</FooterLink>
-          </li>
-          <li>
-            <FooterLink href={"/dashboard/profile"}>Profile</FooterLink>
-          </li>
-          <li>
-            <FooterLink href={"/dashboard/settings"}>Settings</FooterLink>
-          </li>
-          <li>
-            <FooterLink href={"/#termsandconditions"}>
-              Terms & Conditions
-            </FooterLink>
-          </li>
-          <li>
-            <FooterLink href={"/#accessibilitystatement"}>
-              Accessibility statement
-            </FooterLink>
-          </li> */}
-          {/* <li>
-            <Button
-              variant={"text"}
-              color={session ? "error" : "success"}
-              onClick={() => (session ? signOut() : signIn())}
-            >
-              {session ? "Sign Out" : "Sign In"}
-            </Button>
-          </li> */}
-        </ul>
+          </ul>
       </Paper>
     </footer>
   );
