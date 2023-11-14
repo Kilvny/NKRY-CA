@@ -54,9 +54,9 @@ let user: User = {
           const filePath = './token.json';
           
           // Write the JSON data to the file
-          fs.writeFileSync(filePath, jsonData);
+          // fs.writeFileSync(filePath, jsonData);
           
-          console.log("Token has been written to token.json");
+          // console.log("Token has been written to token.json");
         // const data = await response.json();
 
         // Store the user data and token in localStorage
