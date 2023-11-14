@@ -1,7 +1,7 @@
 import { DeliveriesUpdateDTO } from "@/DTOs/DeliveriesUpdateDTO";
 import { MonthlyFinanceDTO } from "@/DTOs/MonthlyFinance";
 
-const apiUrl = 'http://nkryca-001-site1.btempurl.com/api'
+const apiUrl = 'https://nkryca-001-site1.btempurl.com/api'
 
 export const updateDeliveriesOfEmployee = async (data: DeliveriesUpdateDTO, employeeId: string, token: string): Promise<any> => {
     try {

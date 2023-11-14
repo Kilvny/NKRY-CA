@@ -15,7 +15,7 @@ interface User extends DefaultUser {
     sub?: string;
   };
 
-const apiUrl = process.env.API_URL || 'http://nkryca-001-site1.btempurl.com/api';
+const apiUrl = process.env.API_URL || 'https://nkryca-001-site1.btempurl.com/api';
 let user: User = {
   id: "",
   username: "data.username",

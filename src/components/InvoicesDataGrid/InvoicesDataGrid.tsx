@@ -12,7 +12,7 @@ import Animations from '../common/Animations';
 const renderDetailsCell = (params: any) => {
     const invoiceId = params?.row?.invoiceNumber; // Access the 'id' property from the row data
     return (
-      <Link href={`/customer-service/invoices/${encodeURIComponent(invoiceId)}`}>
+      <Link href={`/nkry-ca/customer-service/invoices/${encodeURIComponent(invoiceId)}`}>
         <ReceiptLongOutlinedIcon color='info' />
       </Link>
     );

@@ -1,7 +1,7 @@
 import { InvoiceDTO } from '@/DTOs/Invoice';
 import axios from 'axios';
 
-const apiUrl = 'http://nkryca-001-site1.btempurl.com/api'
+const apiUrl = 'https://nkryca-001-site1.btempurl.com/api'
 
 export const getAllInvoices = async () : Promise<any> => {
     try {
