@@ -93,17 +93,24 @@ export default function About() {
     async function fetchEmployee() {
       try {
         const employeeData = await getEmployee(employeeId, token);
-        const _currMonthFinance: MonthlyFinanceDTO = await getCurrentMonthFinance(employeeId, token);
-        setCurrMonthFinance(_currMonthFinance)
-        console.log(_currMonthFinance);
-        setExpensesData(_currMonthFinance?.monthlyExpenses?.sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()))
         setEmployee(employeeData);
+
         setVisaExpDate(employeeData?.personalDetails?.visaExpiryDate?.toString())
         setFlightTicketsDueDate(employeeData?.personalDetails?.flightTicketsDueDate?.toString())
         setDuePaymentsDueDate(employeeData?.personalDetails?.duesPayDate?.toString())
         
       } catch (error) {
         console.error('Error fetching employee:', error);
+      }
+
+      try {
+        const _currMonthFinance: MonthlyFinanceDTO = await getCurrentMonthFinance(employeeId, token);
+        setCurrMonthFinance(_currMonthFinance)
+        console.log(_currMonthFinance);
+        setExpensesData(_currMonthFinance?.monthlyExpenses?.sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()))
+      } catch (error) {
+        console.error('Error fetching employee finance:', error);
+        
       }
     }
 
