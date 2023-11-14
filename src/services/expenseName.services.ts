@@ -1,4 +1,4 @@
-const apiUrl = 'https://localhost:7112/api'
+const apiUrl = 'http://nkryca-001-site1.btempurl.com/api'
 
 export const getAllExpenseNamesFixed = async (token: string): Promise<string[]> => {
   try {

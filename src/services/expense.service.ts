@@ -1,6 +1,6 @@
 import { ExpenseDTO } from "@/DTOs/Expense";
 
-const apiUrl = 'https://localhost:7112/api'
+const apiUrl = 'http://nkryca-001-site1.btempurl.com/api'
 
 export const postExpense = async (expense: ExpenseDTO, employeeId: string, token: string): Promise<ExpenseDTO | any> => {
   try {

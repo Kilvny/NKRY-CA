@@ -1,7 +1,7 @@
 import { EmployeeDTO } from '@/DTOs/Employee';
 import { PersonalDetailsDTO } from '@/DTOs/PersonalDetailsDTO';
 
-const apiUrl = 'https://localhost:7112/api'
+const apiUrl = 'http://nkryca-001-site1.btempurl.com/api'
 
 export const getAllEmployees = async (token: string): Promise<EmployeeDTO[]> => {
   try {

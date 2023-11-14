@@ -12,7 +12,7 @@ interface User extends DefaultUser {
     token?: string;
   };
 
-const apiUrl = 'https://localhost:7112/api'
+const apiUrl = 'http://nkryca-001-site1.btempurl.com/api'
 let user: User = {
   id: "",
   username: "data.username",
