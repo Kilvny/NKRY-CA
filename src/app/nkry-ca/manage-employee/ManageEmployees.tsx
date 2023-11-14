@@ -21,6 +21,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getAllEmployees } from "@/services/employee.services";
 import { EmployeeDTO } from "@/DTOs/Employee";
 import TOKEN  from "../../../../token.json"
+import { useSession } from "next-auth/react";
 
 const employees = [
   {
@@ -49,6 +50,7 @@ const ManageEmployees = () => {
   const [editedEmail, setEditedEmail] = useState("");
   const [editedDepartment, setEditedDepartment] = useState("");
 
+  const { data: session } = useSession()
   const router = useRouter();
   const [employees, setEmployees] = useState<EmployeeDTO[]>([]);
   [
@@ -70,7 +72,7 @@ const ManageEmployees = () => {
     },
     // Add more employee data
   ]
-  const token = TOKEN.token
+  const token = session?.user?.email ?? TOKEN.token 
   useEffect(() => {
     async function fetchEmployees() {
       try {

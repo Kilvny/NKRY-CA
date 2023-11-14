@@ -25,7 +25,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { usePathname } from 'next/dist/client/components/navigation';
 
 const drawerWidth = 240;
@@ -66,6 +66,8 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
   const pathname = usePathname();
   const isOnNKRY_CA = pathname?.startsWith('/nkry-ca');
 
+  const { data: session } = useSession()
+
   const routes: string[] = ['analytics', 'invoices', 'manage-employee', 'settings', '']
   const routeTranslations: string[] = ['Analytics', 'Invoices', 'Manage Employees', 'Settings', 'Sign Out']
   const routeIcons: React.JSX.Element[] = [
@@ -92,6 +94,7 @@ export default function PersistentDrawerLeft( {open, handleDrawerClose, ref} : {
   
   React.useEffect(()=> {
     localStorage.removeItem("userToken")
+    sessionStorage.clear();
   }, [signOutClicked])
 
   return (

@@ -19,6 +19,7 @@ import { postEmployee } from '@/services/employee.services';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import { Card, CardContent, Input } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -63,9 +64,10 @@ const New = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const router = useRouter()
+    const { data: session } = useSession()
 
     useEffect(() => {
-      const userToken = TOKEN
+      const userToken = session?.user?.email ?? TOKEN
       if (userToken) {
         localStorage.setItem("userToken", userToken);
         // console.log("User token saved to localStorage:", userToken);

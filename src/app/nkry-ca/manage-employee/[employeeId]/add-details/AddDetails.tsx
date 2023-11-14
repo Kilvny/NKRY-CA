@@ -14,6 +14,7 @@ import { useParams } from 'next/navigation';
 import { PersonalDetailsDTO } from '@/DTOs/PersonalDetailsDTO';
 import { putPersonalDetails } from '@/services/employee.services';
 import Token from '../../../../../../token.json'
+import { useSession } from 'next-auth/react';
 
 type Props = {};
 
@@ -37,10 +38,11 @@ const AddDetails = (props: Props) => {
   const [value, setValue] = useState<Date | null | Dayjs>(new Date());
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const { data: session } = useSession()
   const router = useRouter();
   const params = useParams();
   const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
-  const token: string = Token?.token;
+  const token: string = session?.user?.email ?? Token?.token;
 
   const handleOptionChange = (event: SelectChangeEvent<string>, child: React.ReactNode) => {
     setSelectedOption(event.target.value);

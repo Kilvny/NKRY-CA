@@ -16,6 +16,7 @@ import Token from '../../../../../../token.json'
 import { postExpense } from '@/services/expense.service';
 import { ExpenseDTO } from '@/DTOs/Expense';
 import { getCurrentDateTime } from '@/helper/dateTime';
+import { useSession } from 'next-auth/react';
 
 type Props = {};
 // here we should get the expenses with filter ?names=true in the api call 
@@ -35,7 +36,8 @@ const AddFinance = (props: Props) => {
   const params = useParams();
   const employeeId: string = params?.employeeId  ? params?.employeeId.toString() : ""
   
-  const token: string = Token?.token;
+  const { data: session } = useSession()
+  const token: string = session?.user?.email ?? Token?.token;
   useEffect(() => {
     async function fetchExpenseNames() {
       try {

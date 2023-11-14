@@ -67,7 +67,7 @@ const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const userToken = token
+    const userToken = session?.user?.email
   if (userToken) {
     localStorage.setItem("userToken", userToken);
     // console.log("User token saved to localStorage:", userToken);

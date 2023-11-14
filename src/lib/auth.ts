@@ -79,6 +79,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         // Update the session user object
         session.user = user;
+        session.user = token
       }
 
       return session;

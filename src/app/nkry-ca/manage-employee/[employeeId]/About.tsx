@@ -42,6 +42,7 @@ import { esES } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ar';
 import { PersonalDetailsDTO } from '@/DTOs/PersonalDetailsDTO';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -80,13 +81,14 @@ export default function About() {
   const [duePaymentsDueDate, setDuePaymentsDueDate] = useState<string | undefined>("")
 
 
+  const { data: session } = useSession()
   const router = useRouter();
   const params = useParams();
   const employeeId: string = params?.employeeId ? params?.employeeId.toString() : ""
 
   
 
-  const token = TOKEN.token
+  const token = session?.user?.email ?? TOKEN.token
   useEffect(() => {
     async function fetchEmployee() {
       try {

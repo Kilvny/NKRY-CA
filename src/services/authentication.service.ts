@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Awaitable, DefaultUser } from 'next-auth';
 import * as fs from 'fs';
+import * as dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env
 
 
 // Set a global default header for Axios
@@ -10,9 +12,10 @@ interface User extends DefaultUser {
     id: string;
     username: string;
     token?: string;
+    sub?: string;
   };
 
-const apiUrl = 'http://nkryca-001-site1.btempurl.com/api'
+const apiUrl = process.env.API_URL || 'http://nkryca-001-site1.btempurl.com/api';
 let user: User = {
   id: "",
   username: "data.username",
@@ -38,7 +41,9 @@ let user: User = {
       if (response.status == 200) {
           const token = await response.text();
           console.log("Token is... : ", token)
-
+          
+          // Store token securely using environment variables
+          process.env.USER_TOKEN = token;
           // Create a JSON object with the token
           const data = { token };
           
@@ -61,13 +66,23 @@ let user: User = {
           username: "data.username",
           token: token,
         };
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        };
+        const requestOptions = {
+          method: 'GET',
+          headers: headers,
+          host: 'nkry-ca.vercel.app', 
+        };
         // localStorage.setItem("user", JSON.stringify(user));
         // axios.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
-        const _user = await fetch(`${apiUrl}/Users?SearchQuery=${username}`).then(res => res.text());
-        const userResult = await _user;
-        user.username = userResult;
-        user.id = userResult;
-        user.email = userResult;
+        // const _user = await fetch(`${apiUrl}/Users?SearchQuery=${username}`, requestOptions).then(res => res.json());
+        // const userResult = await _user;
+        // user.username = userResult;
+        // user.id = userResult;
+        user.email = token;
+        user.sub = token;
         return user;
       } else {
         console.log("login was not successful");

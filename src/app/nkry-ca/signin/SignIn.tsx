@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Box, Typography, TextField, Button, CircularProgress } from "@mui/material";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import scss from "./SignIn.module.scss"
 import { User } from "next-auth";
@@ -17,21 +17,23 @@ const SignIn = () => {
   const pathName = usePathname()
   const searchParams = useSearchParams()?.get("callbackUrl");
   const callbackUrl = decodeURI(searchParams || "/");
-  
+  const { data: session } = useSession()
+
   
   let result: any = {};
-
+  let userToken =  session?.user?.email
   useEffect(() => {
     console.log("useEffect is running");
 
-    const userToken = getCurrentUser()?.token;
+    if (userToken == undefined) 
+    {localStorage.getItem("userToken");}
     if (userToken) {
       localStorage.setItem("userToken", userToken);
       console.log("User token saved to localStorage:", userToken);
     } else {
       console.log("User token is not available or empty.");
     }
-  }, []);
+  }, [userToken]);
   // useEffect(()=> {
   //   setTimeout(() => {
   //     let str: string = getCurrentUser()?.token + "";

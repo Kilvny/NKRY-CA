@@ -55,6 +55,7 @@ const SignIn = () => {
       }
     //   if (result?.ok) {
       router.push(callbackUrl);
+      // console.log(result);
         // router.push("/");
     //   }
     } catch (error) {
@@ -77,7 +78,7 @@ const SignIn = () => {
     >
      { session 
       ? 
-      (<span>signed in as {session?.user?.email}. </span> )
+      (<span>signed in as {email}. </span> )
       :
       (
         <Box

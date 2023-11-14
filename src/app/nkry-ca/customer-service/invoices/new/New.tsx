@@ -63,9 +63,11 @@ const New = () => {
     const [depth, setDepth] = useState<number>(0);
 
     const [token, setToken] = useState<string | null>("");
+    const { data: session } = useSession()
+
 
     useEffect(() => {
-      const userToken = TOKEN
+      const userToken = session?.user?.email
       if (userToken) {
         localStorage.setItem("userToken", userToken);
         // console.log("User token saved to localStorage:", userToken);
